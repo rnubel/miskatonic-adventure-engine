@@ -1,0 +1,98 @@
+<ASTRAAL version='0.1' gamename='Test Game'>
+	<RESOURCES id="main" preload="true">
+		<ANIMATION id="caption_card_bg" fps="1" width="800" height="600" framecount="1">
+			captioncard
+		</ANIMATION>
+		<ANIMATION id="spr1" fps="4" width="40" height="40" framecount="2">
+			lcglowingeldersign		
+		</ANIMATION>
+		<ANIMATION id="spr2" fps="4" width="40" height="80" framecount="2">		
+			lcglowingeldersign
+		</ANIMATION>
+		<ANIMATION id="spr_star" fps="4" width="32" height="32" framecount="1">		
+			star
+		</ANIMATION>
+		<ANIMATION id="bg_lab1" fps="0" width="800" height="480" framecount="1">
+			lab1
+		</ANIMATION>
+		<ANIMATION id="bg_lab2" fps="0" width="800" height="446" framecount="1">
+			lab2
+		</ANIMATION>
+	</RESOURCES>
+	<RESOURCES id="set_two">	
+	</RESOURCES>
+	
+	<ITEMS>
+		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>
+		<ITEM id="item_rune" sprite="spr1" name="Rune">A glowing rune.</ITEM>	
+	</ITEMS>
+	
+	<JOURNALS>
+		<JOURNAL id="personal" title="Notes">
+			<PAGE id="one" title="Awoken">
+				I've woken up in a strange lab... but I can't remember who I am, or how I got here.
+			</PAGE> 
+			<PAGE id="two" title="The body">
+				Thar be a body on that there table.
+			</PAGE> 
+		</JOURNAL>
+	</JOURNALS>
+	
+	<SCENE id="scene_lab1" resourceblock="main" background="bg_lab1" width="800" height="480">
+		<NAVIGATION position="right" to_scene="scene_lab2"/>		
+	
+		<OBJECT id="lab_null" x="0" y="0" width="0" height="0" sprite="">
+			<EVENT event="onload">				
+				Call showCaptionCard("I awoke, as if from a deep slumber, but with little of the ease of waking that one would expect after such a sleep. Breath entered my body, drawn in reflexively, forcing its way into my stiffened chest.", "I coughed, the spasm racking my frame but bringing feeling to my limbs, which felt in some way different -- perhaps it had been long indeed since I fell asleep.", "Opening my eyes, the dim lighting of my surroundings caused me no discomfort. However, the haze of my sudden animation obscured the nature of the sight, and only gradually did my vision truly come into focus.");			
+				Call fadeIn(2);
+				Call unlockJournalPage("personal", "one");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="jar" x="151" y="96" width="72" height="72" sprite="">
+			<EVENT event="onclick">				
+				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");				
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="vials" x="158" y="207" width="61" height="45" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("The glass vials on the shelves contain a faintly-glowing, green fluid... though the glow is obscured by streaks of dirt on the glass.", "An old label on the first glass reads 'Property of H. West,' but holds no indications of the content. The seal on the vials are unbroken.");
+			</EVENT>
+			<EVENT event="oncombine">
+				
+			</EVENT>
+		</OBJECT>		
+		<OBJECT id="skull" x="232" y="189" width="47" height="53" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("A human skull. Perhaps this place's owner was a lover of Shakespeare.");
+				Call giveItem("item_star");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="booktop" x="316" y="114" width="37" height="52" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("This book is entitled 'Unaussprechlichen Kulten' -- I've heard of it, but never read it. Most libraries have banned it from their shelves.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="booksbottom" x="364" y="189" width="61" height="53" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("Books of incredible age, all of which look too fragile to touch, much less open.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="testtubes" x="425" y="198" width="48" height="75" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("Test tubes with plumes of dark fluid swirled within; streaks on liquid marble.");
+			</EVENT>
+		</OBJECT>		
+	</SCENE>
+	<SCENE id="scene_lab2" resourceblock="main" background="bg_lab2" width="800" height="446">
+		<NAVIGATION position="left" to_scene="scene_lab1"/>		
+
+		<OBJECT id="lab2_dummy" x="0" y="0" width="0" height="0" sprite="">
+			<EVENT event="onload">
+				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
+								 "The macabre scene before me assaulted all my senses, yet no effort of mine could force my gaze away. My mind began to reel, and my tenuous grip upon my consciousness began to slip; having just woken from a black oblivion, I found myself in danger of slipping into it once again.",
+								 "Frantically, I struggled to regain control of my sanity...");
+								 
+			</EVENT>
+		</OBJECT>			
+	</SCENE>
+</ASTRAAL>

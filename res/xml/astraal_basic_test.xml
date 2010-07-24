@@ -1,0 +1,26 @@
+<ASTRAAL version='0.1' gamename='Test Game'>
+	<RESOURCES id="main" preload="true">
+		<ANIMATION id="spr1" fps="4" width="40" height="40" framecount="2">
+			lcglowingeldersign		
+		</ANIMATION>
+		<ANIMATION id="spr2" fps="4" width="40" height="80" framecount="2">		
+			lcglowingeldersign
+		</ANIMATION>
+		<ANIMATION id="bg1" fps="0" width="800" height="480" framecount="1">
+			background
+		</ANIMATION>
+	</RESOURCES>
+	<RESOURCES id="set_two">	
+	</RESOURCES>
+	
+	<SCENE id="lab" resourceblock="main" background="bg1" width="800" height="600">
+		<OBJECT id="jar" x="4" y="4" width="40" height="40" sprite="spr1">
+			
+		</OBJECT>
+		<OBJECT id="jar2" x="42" y="100" width="40" height="40" sprite="spr2">
+			
+		</OBJECT>
+	</SCENE>
+	<SCENE id="lab2" resourceblock="set_two" background="bg1" width="800" height="600">	
+	</SCENE>
+</ASTRAAL>
