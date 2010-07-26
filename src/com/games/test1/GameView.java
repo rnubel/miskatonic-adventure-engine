@@ -150,8 +150,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconJournal = BitmapFactory.decodeResource(mRes, R.drawable.journal);
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
-			
-			tempImage = BitmapFactory.decodeResource(mRes, R.drawable.lab2);
+	
 
 			// Make sure we don't start trying to draw anything, not until startGame
 			// is called by our run() method.			
@@ -788,6 +787,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				return mInventory;
 			}
 
+			public DrawnObject getBackground() {
+				return getScene().getAllObjects().get(0);
+			}
+
 		}
 		
 		/** Displays a full-screen caption card. */
@@ -1069,6 +1072,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 5;
 			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.04f;
 			
+			private Bitmap mSanityBackgroundImage;
+			
 			private long mTimeOfLastTap;
 			private Queue<Long> mTapIntervals = new LinkedList<Long>();			
 						
@@ -1088,6 +1093,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			public void start() {
 				Log.w("Miskatonic", "STARTING SANITY MINIGAME STATE ***");
+				
+				// Use the MGS's current background as ours.
+				mSanityBackgroundImage = getMainGameState().getBackground().getAnimation().getBitmap();
 				
 				mFrequency = SANITY_MINIGAME_STARTING_FREQUENCY;
 			}

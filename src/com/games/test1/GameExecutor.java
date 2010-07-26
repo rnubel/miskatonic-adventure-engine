@@ -259,15 +259,17 @@ public class GameExecutor {
 		
 		// Give the scene an execution state for executing scripts.
 		mGame.setExecutionState(mExecutionState);
-		
-		// Remove the loading screen.
-		mGame.setState(StateType.Main);
-		
+				
 		// Reload the scene's state (object positions and such).
 		if (!restoreStateForCurrentScene()) {
 			// If this returns false, the scene did not currently exist. So,
 			// call all objects' onLoad events.
 			doOnLoadForSceneObjects();
+		}
+
+		// Remove the loading screen if it's still up.
+		if (mGame.getCurrentStateType() == StateType.Loading) {
+			mGame.setState(StateType.Main);
 		}
 	}
 	
