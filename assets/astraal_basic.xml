@@ -91,7 +91,7 @@
 				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
 								 "The macabre scene before me assaulted all my senses, yet no effort of mine could force my gaze away. My mind began to reel, and my tenuous grip upon my consciousness began to slip; having just woken from a black oblivion, I found myself in danger of slipping into it once again.",
 								 "Frantically, I struggled to regain control of my sanity...");
-								 
+				Call doOnReturnToMainGame("Call enterSanityMiniGame();");								 
 			</EVENT>
 		</OBJECT>			
 	</SCENE>
