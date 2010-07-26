@@ -1193,6 +1193,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				}
 				mTimeOfLastTap = currentTimeMillis;
 			}
+			
+			public StateType getType() { return StateType.SanityMiniGame; }
+
 		}
 		
 		/** Temporary state that switches back immediately. */
@@ -1232,6 +1235,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				c.drawColor(Color.BLACK);
 				// Maybe later we can throw in a "loading" message.
 			}					
+			
+			public StateType getType() { return StateType.Loading; }
+
 		}		
 	} // GameThread
 
