@@ -661,7 +661,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public void showInventory() {
 				mUI.removeControlsFromPosition(GameUI.POSITION_CENTER);
 				mUI.addControl(new UIControlInventory(mInventory, 
-						(int)(getWidth() * .8), (int)(getHeight() * .8)), GameUI.POSITION_CENTER);
+						(int)(getWidth() * .8), (int)(getHeight() * .8)), GameUI.POSITION_CENTER, false);
 			}
 
 			/** Add a navigator object to an edge of the scene. Called via AAL, essentially. */
