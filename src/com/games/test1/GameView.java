@@ -1069,12 +1069,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Displays the sanity minigame. */
 		public class SanityMiniGameState extends com.games.test1.State {
+			private static final int OSCILLATION_AMPLITUDE_MULTIPLIER = 5;
+			private static final int NUM_SLICES_TO_DRAW = 20;
 			private static final int 	SANITY_MINIGAME_WINDOW_SIZE = 5;
 			private static final float 	SANITY_MINIGAME_STARTING_FREQUENCY = 2.0f;
 			private static final float 	SANITY_MINIGAME_STEP_SIZE = 0.2f;
 			private static final float 	SANITY_MINIGAME_ENDING_FREQUENCY = 1.0f;
 			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 5;
 			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.04f;
+			private static final float WAVELENGTH_MULTIPLIER = 20f;
 			
 			private Bitmap mSanityBackgroundImage;
 			
@@ -1090,6 +1093,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			/** How long the player has successfully been matching the current frequency. */
 			private int mPlayerStepsConfirmed;
 			
+			/** Bounds on what part of the bg image we're drawing. */
+			private int mLeftBound, mRightBound;
+			private int mSliceHeight;
+			
 			
 			public SanityMiniGameState() {
 				
@@ -1100,17 +1107,38 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				
 				// Use the MGS's current background as ours.
 				mSanityBackgroundImage = getMainGameState().getBackground().getAnimation().getBitmap();
+				mLeftBound = mSanityBackgroundImage.getWidth() / 2 - getWidth() / 2;
+				mRightBound = mSanityBackgroundImage.getWidth() / 2 + getWidth() / 2;
+				mSliceHeight = mSanityBackgroundImage.getHeight() / NUM_SLICES_TO_DRAW;
 				
 				mFrequency = SANITY_MINIGAME_STARTING_FREQUENCY;
 			}
 			
 			public void draw(Canvas c) {
-				c.save();
+				
 				c.drawColor(Color.WHITE);				
 				
 				int A = 100;
 				float t = getTimeInSeconds();
 				
+				
+				
+				float xShift, prevXShift = 0f;
+				for (int i = 0; i < NUM_SLICES_TO_DRAW; i++) {
+					c.save();
+					xShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + i * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;					
+					c.translate(xShift, 0);
+					c.skew(-(prevXShift - xShift)/(float)mSliceHeight, 0);//
+					c.translate((prevXShift - xShift)/(float)mSliceHeight * i * mSliceHeight, 0);
+					Rect src = new Rect(mLeftBound, i * mSliceHeight, mRightBound, (i+1) * mSliceHeight);
+					Rect dst = new Rect(0, i * mSliceHeight, getWidth(), (i+1) * mSliceHeight);
+					c.drawBitmap(mSanityBackgroundImage, src, dst, GameUI.scratchPaint);
+					
+					prevXShift = xShift;
+					c.restore();
+				}
+				
+								
 				// TEMP DRAWING STUFF
 				GameUI.scratchPaint.setColor(Color.RED);
 				GameUI.scratchPaint.setTextAlign(Paint.Align.LEFT);
@@ -1121,17 +1149,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					
 					c.drawText("" + mPlayerAverageInterval + " vs " + (1000f / mFrequency), 10, 120, GameUI.scratchPaint);
 				}
-				/*
-				int numSlices = 10;
-				for (int i = 0; i < numSlices; i++) {					
-					c.translate((float) Math.sin(mMod++ + (float)i/10) * 5, 0);
-					Rect src = new Rect(0, i * (tempImage.getHeight() / numSlices), tempImage.getWidth(), (i+1) * (tempImage.getHeight() / numSlices));
-					Rect dst = new Rect(0, i * (tempImage.getHeight() / numSlices), tempImage.getWidth(), (i+1) * (tempImage.getHeight() / numSlices));
-					c.drawBitmap(tempImage, src, dst, GameUI.scratchPaint);
-				}
-				*/
 				
-				c.restore();
+				
+				
 			}
 
 			private float getTimeInSeconds() {
