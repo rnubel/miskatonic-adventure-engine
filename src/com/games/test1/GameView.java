@@ -6,8 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Timer;
 import java.util.Vector;
 
 import org.xml.sax.InputSource;
@@ -69,6 +72,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	private Bundle mStateBundle;
 
 	public ASTRAALRoot mRoot;
+
+	public Bitmap tempImage;
 	
 	public static Typeface captionTypeface;
 	public static Bitmap iconCompass;
@@ -145,18 +150,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconJournal = BitmapFactory.decodeResource(mRes, R.drawable.journal);
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
+			
+			tempImage = BitmapFactory.decodeResource(mRes, R.drawable.lab2);
 
 			// Make sure we don't start trying to draw anything, not until startGame
 			// is called by our run() method.			
 			mActiveState = new com.games.test1.State();
 			
 			// Begin in the loading state, and transfer back as soon as initial loading is done.
-			setState(StateType.Loading);
+			setState(StateType.Initialization);
 		}
 
 
-		/** Load in the ASTRAAL game definition. */
-		public void loadAstraalData(String astraalFilePath) {
+		/** Actually start the game. */
+		public void startGame(String astraalFilePath) {
 			// Create the ASTRAAL parser and load in the game.
 			ASTRAALParser parser = new ASTRAALParser();
 
@@ -169,7 +176,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				return;
 			}
 			
-			Log.w("Miskatonic", "ASTRAAL tree loaded successfully.");					
+			// We leave creation of the Executor to the MainGameState.			
+
 		}
 
 
@@ -183,9 +191,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		/**
 		 * Reset the camera to a default position and size.
 		 */
-		public void resetCamera() {			 
-			getMainGameState().setCamera(new Camera(0, 0, 
-					GameView.this.getWidth(), GameView.this.getHeight(), 
+		public void resetCamera() {
+			int w = GameView.this.getWidth(),
+				h = GameView.this.getHeight();
+			getMainGameState().setCamera(new Camera(
+					getCurrentScene().getWidth() / 2 - w/2, 
+					0, 
+					w, 
+					h, 
 					getMainGameState().getScene()));
 
 		}		
@@ -349,8 +362,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				case MainMenu:
 					tState = new MainMenuState();
 					break;
+				case Initialization:
+					tState = new InitializationState();
+					break;
 				case Loading:
 					tState = new LoadingState();
+					break;
+				case SanityMiniGame:
+					tState = new SanityMiniGameState();
 					break;
 				}
 
@@ -503,6 +522,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		private synchronized void loadAndStartMainGameState() {
+			mActiveState = new com.games.test1.State();
 			setState(StateType.Main);
 			getMainGameState().load();			
 		}
@@ -567,24 +587,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			/** Identifies which item the user has picked up and is trying to use. */
 			private InventoryItem mSelectedInventoryItem = null;
 			
-			public MainGameState() {
+			public MainGameState() { 
 			
 			}
 
+			public void start() {				
+				Log.w("Miskatonic", "STARTING MAIN GAME STATE ***");
+				if (mExecutor != null)
+					mExecutor.executeBuffer();
+			}
+			
 			public void load() {
 				Log.w("Miskatonic",	"Beginning load sequence for main game...");
 				
 				// Create the executor, which will actually run the game.
 				mExecutor = new GameExecutor(GameThread.this, mRoot);
-				
+				mExecutor.startGame();
+
 				if (mBundleToLoad != null) {
-					// Start up from where we left off.
 					Log.w("Miskatonic", "Restoring state from Bundle " + mBundleToLoad.toString());
 					mExecutor.loadFromBundle(mBundleToLoad);
 					mBundleToLoad = null;
-				} else {
-					// Start new.
-					mExecutor.startGame();
 				}
 				
 				Log.w("Miskatonic",	"Load complete.");
@@ -675,9 +698,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			/** Should probably replace this with reflection, but eh. */
 			public StateType getType() { return StateType.Main; }
 
-			public void start() {				
-				Log.w("Miskatonic", "STARTING MAIN GAME STATE ***");			
-			}
+			
 		
 
 
@@ -777,11 +798,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private int mTextHeight;
 			private int yStart;
 			private Vector<String> lines = new Vector<String>();
+			
+			private Paint captionPaint = new Paint();
 
+			public CaptionCardState() {
+				computeTextHeight();
+			}
+			
 			public void start() {				
 				Log.w("Miskatonic", "STARTING CAPTION CARD STATE ***");
-				
-				computeTextHeight();
 			}
 
 			public void setCaptions(Vector<String> captions) {
@@ -792,12 +817,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public void computeTextHeight() {
 				setupCaptionFont();
 				Rect bounds = new Rect();
-				GameUI.scratchPaint.getTextBounds("AAA", 0, 1, bounds);
+				captionPaint.getTextBounds("AAA", 0, 1, bounds);
 				mTextHeight = (int) (Math.abs(bounds.top - bounds.bottom) * 1.5);
 			}
 			
 			public void draw(Canvas c) {
-				synchronized(this) {
+				synchronized(lines) {
 					super.draw(c);
 					setupCaptionFont();
 									
@@ -805,33 +830,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 						c.drawText(lines.get(i), 
 								getWidth()/2, 
 								yStart + i * mTextHeight,
-								GameUI.scratchPaint);		 			
+								captionPaint);		 			
 					}
 				}
 			}
 
 			private void setupCaptionFont() {
-				GameUI.scratchPaint.setColor(Color.WHITE);
-				GameUI.scratchPaint.setTypeface(captionTypeface);
-				GameUI.scratchPaint.setTextAlign(Align.CENTER);
+				captionPaint.setColor(Color.WHITE);
+				captionPaint.setTypeface(captionTypeface);
+				captionPaint.setTextAlign(Align.CENTER);
 				// Scale font size based on screen size.
 				if (isSmallScreen()) {
-					GameUI.scratchPaint.setTextSize(19.0f);
+					captionPaint.setTextSize(19.0f);
 				} else {
-					GameUI.scratchPaint.setTextSize(22.0f);
+					captionPaint.setTextSize(22.0f);
 				}
 					
-				GameUI.scratchPaint.setAntiAlias(true);
+				captionPaint.setAntiAlias(true);
 			}
 
 			/** Update the caption display. */
 			private void updateCaption() {
-				synchronized(this) { 
+				synchronized(lines) {					
 					mCurrentCaption = mCaptions.get(0);
 					
 					// TODO: Use a REAL algorithm that DOESN'T suck. And precalculate!					
-					lines = new Vector<String>(); 
-					Utility.typesetText(mCurrentCaption, (int) (getWidth() * .7), lines);
+					lines = new Vector<String>();
+					setupCaptionFont();
+					Utility.typesetText(mCurrentCaption, (int) (getWidth() * .7), lines, captionPaint);
 					
 					yStart = getHeight()/2 - (lines.size() * mTextHeight) / 2 + 10;
 				}
@@ -989,7 +1015,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					}
 				}
 			}
-		}
+		} // JournalState
+		
 		
 		/** Main menu for the game. */
 		public class MainMenuState extends BasicGameState {
@@ -1012,7 +1039,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
 				mUI.addControl(new UIControlButton(100, 40, "Start Game", new UIEvent() {
 					public void execute(GameThread t) {						
-						t.loadAndStartMainGameState();
+						t.loadAndStartMainGameState();						
 					}
 				}),GameUI.POSITION_CENTER);
 			}
@@ -1031,22 +1058,149 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			
 			public StateType getType() { return StateType.MainMenu; }
-		}
+		} // MainMenuState
+		
+		/** Displays the sanity minigame. */
+		public class SanityMiniGameState extends com.games.test1.State {
+			private static final int 	SANITY_MINIGAME_WINDOW_SIZE = 5;
+			private static final float 	SANITY_MINIGAME_STARTING_FREQUENCY = 2.0f;
+			private static final float 	SANITY_MINIGAME_STEP_SIZE = 0.2f;
+			private static final float 	SANITY_MINIGAME_ENDING_FREQUENCY = 1.0f;
+			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 5;
+			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.04f;
+			
+			private long mTimeOfLastTap;
+			private Queue<Long> mTapIntervals = new LinkedList<Long>();			
+						
+			/** Current frequency that needs to be matched, in beats-per-second. */
+			private float mFrequency;
+			
+			/** Player's current average interval between taps. */
+			private int mPlayerAverageInterval;
+			
+			/** How long the player has successfully been matching the current frequency. */
+			private int mPlayerStepsConfirmed;
+			
+			
+			public SanityMiniGameState() {
+				
+			}
+			
+			public void start() {
+				Log.w("Miskatonic", "STARTING SANITY MINIGAME STATE ***");
+				
+				mFrequency = SANITY_MINIGAME_STARTING_FREQUENCY;
+			}
+			
+			public void draw(Canvas c) {
+				c.save();
+				c.drawColor(Color.WHITE);				
+				
+				int A = 100;
+				float t = getTimeInSeconds();
+				
+				// TEMP DRAWING STUFF
+				GameUI.scratchPaint.setColor(Color.RED);
+				GameUI.scratchPaint.setTextAlign(Paint.Align.LEFT);
+				c.drawRect(0,0,(float) (A + A * Math.sin(mFrequency * 2 * Math.PI * t)),50, GameUI.scratchPaint);
+				c.drawText("" + mTimeOfLastTap, 10, 80, GameUI.scratchPaint);
+				synchronized (mTapIntervals) {
+					c.drawText(mTapIntervals.toString(), 10, 100, GameUI.scratchPaint);
+					
+					c.drawText("" + mPlayerAverageInterval + " vs " + (1000f / mFrequency), 10, 120, GameUI.scratchPaint);
+				}
+				/*
+				int numSlices = 10;
+				for (int i = 0; i < numSlices; i++) {					
+					c.translate((float) Math.sin(mMod++ + (float)i/10) * 5, 0);
+					Rect src = new Rect(0, i * (tempImage.getHeight() / numSlices), tempImage.getWidth(), (i+1) * (tempImage.getHeight() / numSlices));
+					Rect dst = new Rect(0, i * (tempImage.getHeight() / numSlices), tempImage.getWidth(), (i+1) * (tempImage.getHeight() / numSlices));
+					c.drawBitmap(tempImage, src, dst, GameUI.scratchPaint);
+				}
+				*/
+				
+				c.restore();
+			}
 
+			private float getTimeInSeconds() {
+				return (float)(System.currentTimeMillis() % 100000) / 1000f;
+			}
+			
+			@Override
+			public void onMousePress(int x, int y) {				
+				long currentTimeMillis = System.currentTimeMillis();
+				synchronized (mTapIntervals) {
+					// Register the new tap and recompute the average using it.
+					registerTap(currentTimeMillis);					
+					recalculateAverageInterval();					
+				}
+				
+				// If the new average is within tolerance, increment confirmed counter. Otherwise, reset it.
+				int interval = convertFrequencyToInterval(mFrequency);
+				if (Math.abs(mPlayerAverageInterval - interval) 
+						< SANITY_MINIGAME_TOLERANCE_PERCENT * interval) {
+					if (++mPlayerStepsConfirmed > SANITY_MINIGAME_STEPS_TO_CONFIRM) {
+						decreaseFrequency();
+					}
+				} else {
+					mPlayerStepsConfirmed = 0;
+				}
+				
+			}
+
+			/** Increase velocity, decrease altitude, reverse direction! */
+			private void decreaseFrequency() {
+				mFrequency -= SANITY_MINIGAME_STEP_SIZE;				
+				mPlayerStepsConfirmed = 0;				
+				
+				if (mFrequency < SANITY_MINIGAME_ENDING_FREQUENCY) {
+					onSuccess();
+				}
+			}
+
+			/** Callback when the player wins the game. */
+			private void onSuccess() {
+				setState(StateType.Main);				
+			}
+
+			private int convertFrequencyToInterval(float freq) {				
+				return (int) (1000f / freq);
+			}
+
+			private void recalculateAverageInterval() {
+				int sum = 0;					
+				for (long interval : mTapIntervals) {
+					sum += interval;
+				}
+				if (sum > 0)
+					mPlayerAverageInterval = sum / mTapIntervals.size();
+			}
+
+			private void registerTap(long currentTimeMillis) {
+				if (mTimeOfLastTap != 0) {
+					mTapIntervals.add(currentTimeMillis - mTimeOfLastTap);
+					if (mTapIntervals.size() > SANITY_MINIGAME_WINDOW_SIZE) {
+						mTapIntervals.remove();
+					}
+				}
+				mTimeOfLastTap = currentTimeMillis;
+			}
+		}
+		
 		/** Temporary state that switches back immediately. */
-		public class LoadingState extends com.games.test1.State {
+		public class InitializationState extends com.games.test1.State {
 
 			public void start() {				
-				Log.w("Miskatonic", "STARTING LOADING STATE ***");
+				Log.w("Miskatonic", "STARTING INIT STATE ***");
 			}
 
 			public void draw(Canvas c) {
 				c.drawColor(Color.BLACK);
 			}
 			
-			/** Transition immediately into another state. */
 			public void run() {
-				loadAstraalData("astraal_basic.xml");
+				startGame("astraal_basic.xml");	
+				getMainGameState();
 				
 				// If restoring, do not show main menu. Otherwise, do.
 				if (mBundleToLoad != null) {
@@ -1057,9 +1211,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				
 			}
 			
-			public StateType getType() { return StateType.Loading; }
-		} // LoadingState
+			public StateType getType() { return StateType.Initialization; }
+		} // InitializationState
 		
+		/** State that simply draws a black screen to hide any on-going processes. */
+		public class LoadingState extends com.games.test1.State {
+			public void start() {
+				Log.w("Miskatonic", "STARTING LOADING STATE ***");
+			}
+
+			public void draw(Canvas c) {
+				c.drawColor(Color.BLACK);
+				// Maybe later we can throw in a "loading" message.
+			}					
+		}		
 	} // GameThread
 
 	/**

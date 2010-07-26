@@ -2,8 +2,10 @@ package com.games.test1;
 
 public enum StateType {
 	Main, 
-	Loading, 
+	Initialization,
+	Loading,
 	Caption, 
 	Journal,
-	MainMenu
+	MainMenu,
+	SanityMiniGame,
 }

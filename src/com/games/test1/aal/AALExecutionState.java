@@ -12,6 +12,7 @@ import com.games.test1.CameraEffectFade;
 import com.games.test1.DrawnObject;
 import com.games.test1.GameExecutor;
 import com.games.test1.Scene;
+import com.games.test1.StateType;
 import com.games.test1.astraal.ASTRAALResourceFactory;
 
 /**
@@ -225,8 +226,23 @@ public class AALExecutionState {
 				   pageID = (String) args[1].getValue();
 			
 			mExecutor.unlockJournalPage(journalID, pageID);
+		} else 
+			
+		// enterSanityMiniGame: PUTS THE PLAYER INTO THE SANITY MINIGAME UNTIL COMPLETED.
+		if (functionName.equals("enterSanityMiniGame")) {			
+			mExecutor.getGame().setState(StateType.SanityMiniGame);
+		} else 
+			
+		// doOnReturnToMainGame [str_code]: EXECUTES THE GIVEN CODE AFTER RETURNING TO THE MAIN GAME.
+		if (functionName.equals("doOnReturnToMainGame")) {
+			String code = (String) args[0].getValue();
+			AALStatement b = new AALInterpreter().interpret(code);
+			mExecutor.saveCommandsToBuffer(b);
 		}
 		
+		
+		
+	
 		
 			
 		

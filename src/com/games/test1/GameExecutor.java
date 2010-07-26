@@ -16,6 +16,9 @@ import android.os.Bundle;
 import com.games.test1.*;
 import com.games.test1.GameView.*;
 import com.games.test1.aal.AALExecutionState;
+import com.games.test1.aal.AALInterpreter;
+import com.games.test1.aal.AALStatement;
+import com.games.test1.aal.AALStatementBlock;
 import com.games.test1.astraal.*;
 
 /**
@@ -47,6 +50,9 @@ public class GameExecutor {
 
 	/** An execution state which we persist for all scenes. */
 	private AALExecutionState mExecutionState;
+	
+	/** A buffer of AAL commands to execute when returning to the main game state. */
+	private AALStatement mStatementBuffer;
 	
 	public GameExecutor(GameThread gt, ASTRAALRoot root) {
 		this.mGame = gt;
@@ -223,6 +229,9 @@ public class GameExecutor {
 	
 	/** Load the resources for and set up the given scene. */
 	public void switchToScene(ASTRAALScene scene) {
+		// Throw up the loading screen.
+		mGame.setState(StateType.Loading);
+		
 		mCurrentScene = scene;
 		mAstraal.loadResourcesFor(mCurrentScene);
 		
@@ -250,6 +259,9 @@ public class GameExecutor {
 		
 		// Give the scene an execution state for executing scripts.
 		mGame.setExecutionState(mExecutionState);
+		
+		// Remove the loading screen.
+		mGame.setState(StateType.Main);
 		
 		// Reload the scene's state (object positions and such).
 		if (!restoreStateForCurrentScene()) {
@@ -352,5 +364,19 @@ public class GameExecutor {
 	public void unlockJournalPage(String journalID, String pageID) {
 		mAstraal.getJournalByID(journalID).getPageByID(pageID).setUnlocked(true);
 		mJournalState.addUnlockedPage(journalID, pageID);
+	}
+	
+	/** Save the given statements into a buffer, which will be executed when
+	 *  the MainGameState is re-entered. */
+	public void saveCommandsToBuffer(AALStatement b) {
+		mStatementBuffer = b;		
+	}
+	
+	/** Execute the commands in our buffer. */
+	public void executeBuffer() {
+		if (mStatementBuffer != null) { 
+			mStatementBuffer.execute(mExecutionState);
+			mStatementBuffer = null; 
+		}
 	}
 }

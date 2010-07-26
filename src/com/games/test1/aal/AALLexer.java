@@ -11,7 +11,7 @@ public class AALLexer {
 	public Vector<AALToken> lex(String str) {
 		Vector<AALToken> tokens = new Vector<AALToken>();
 		
-		Pattern tokPattern = Pattern.compile("(;|\\,|\\(|\\)|\\[|\\]|\\\".+?\\\"|[^ \\t\\n\\r;\\(\\)\\[\\]\\,]+)");		
+		Pattern tokPattern = Pattern.compile("(\\\".+?\\\"|;|\\,|\\(|\\)|\\[|\\]|[^ \\t\\n\\r;\\(\\)\\[\\]\\,]+)");		
 		Matcher matcher = tokPattern.matcher(str);
 		while (matcher.find()) {
 			// System.out.println(matcher.group());
