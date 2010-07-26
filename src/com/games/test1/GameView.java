@@ -184,6 +184,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		 * Tear down the current scene, so we can build up a new one.
 		 */
 		public void resetScene(int width, int height) {
+			getMainGameState().doBeforeSceneChange();
 			getMainGameState().setScene(new Scene(width, height));
 		}
 
@@ -641,9 +642,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 						game.showJournal();
 					}						
 				}), GameUI.POSITION_TOPLEFT);
-				
-
-				
+			}
+			
+			/** Hook for right before a scene change. */
+			public void doBeforeSceneChange() {
+				if (mUI != null)
+					mUI.removeControlsFromPosition(GameUI.POSITION_BOTTOM);
 			}
 			
 			/** Show a caption on the screen. */
