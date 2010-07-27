@@ -1069,8 +1069,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Displays the sanity minigame. */
 		public class SanityMiniGameState extends com.games.test1.State {
+			private static final int AMPLITUDE_PADDING = 30;
 			private static final int OSCILLATION_AMPLITUDE_MULTIPLIER = 5;
-			private static final int NUM_SLICES_TO_DRAW = 20;
+			private static final int NUM_SLICES_TO_DRAW = 40;
 			private static final int 	SANITY_MINIGAME_WINDOW_SIZE = 5;
 			private static final float 	SANITY_MINIGAME_STARTING_FREQUENCY = 2.0f;
 			private static final float 	SANITY_MINIGAME_STEP_SIZE = 0.2f;
@@ -1107,8 +1108,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				
 				// Use the MGS's current background as ours.
 				mSanityBackgroundImage = getMainGameState().getBackground().getAnimation().getBitmap();
-				mLeftBound = mSanityBackgroundImage.getWidth() / 2 - getWidth() / 2;
-				mRightBound = mSanityBackgroundImage.getWidth() / 2 + getWidth() / 2;
+				mLeftBound = mSanityBackgroundImage.getWidth() / 2 - getWidth() / 2 - AMPLITUDE_PADDING;
+				mRightBound = mSanityBackgroundImage.getWidth() / 2 + getWidth() / 2 + AMPLITUDE_PADDING;
 				mSliceHeight = mSanityBackgroundImage.getHeight() / NUM_SLICES_TO_DRAW;
 				
 				mFrequency = SANITY_MINIGAME_STARTING_FREQUENCY;
@@ -1122,19 +1123,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				float t = getTimeInSeconds();
 				
 				
-				
-				float xShift, prevXShift = 0f;
-				for (int i = 0; i < NUM_SLICES_TO_DRAW; i++) {
+				float xShift, nextXShift = 0f;
+				for (int i = 0; i <= NUM_SLICES_TO_DRAW; i++) {
 					c.save();
 					xShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + i * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;					
+					nextXShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + (i+1) * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;
 					c.translate(xShift, 0);
-					c.skew(-(prevXShift - xShift)/(float)mSliceHeight, 0);//
-					c.translate((prevXShift - xShift)/(float)mSliceHeight * i * mSliceHeight, 0);
-					Rect src = new Rect(mLeftBound, i * mSliceHeight, mRightBound, (i+1) * mSliceHeight);
-					Rect dst = new Rect(0, i * mSliceHeight, getWidth(), (i+1) * mSliceHeight);
-					c.drawBitmap(mSanityBackgroundImage, src, dst, GameUI.scratchPaint);
 					
-					prevXShift = xShift;
+					float skewAmt = (nextXShift - xShift)/(float)mSliceHeight;
+					c.skew(skewAmt, 0);//
+					c.translate(-skewAmt * (i) * mSliceHeight, 0);
+					Rect src = new Rect(mLeftBound, i * mSliceHeight, mRightBound, (i+1) * mSliceHeight);
+					Rect dst = new Rect(-AMPLITUDE_PADDING, i * mSliceHeight, getWidth() + AMPLITUDE_PADDING, (i+1) * mSliceHeight);
+					c.drawBitmap(mSanityBackgroundImage, src, dst, GameUI.scratchPaint);
+									
 					c.restore();
 				}
 				
