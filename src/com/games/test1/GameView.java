@@ -36,6 +36,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DrawFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -80,6 +82,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	public static Bitmap iconJournal;
 	public static Bitmap imageNavigatorRight;
 	public static Bitmap iconInventory;
+	public static Bitmap overlayRadial;
 	
 	/**
 	 * Thread for the actual game logic and rendering.
@@ -122,6 +125,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		/** Loading must be delayed, so save the bundle temporarily. */
 		private Bundle mBundleToLoad;
 
+		
+
 
 		/**
 		 * Initialize the GameThread, but don't start running yet. Wait until
@@ -150,6 +155,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconJournal = BitmapFactory.decodeResource(mRes, R.drawable.journal);
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
+			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
 	
 
 			// Make sure we don't start trying to draw anything, not until startGame
@@ -1079,6 +1085,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 5;
 			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.04f;
 			private static final float WAVELENGTH_MULTIPLIER = 20f;
+			private static final double MAX_OVERLAY_ALPHA = 100;
 			
 			private Bitmap mSanityBackgroundImage;
 			
@@ -1140,6 +1147,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					c.restore();
 				}
 				
+				GameUI.scratchPaint.setAlpha((int) (Math.sin(mFrequency * 2 * Math.PI * t) * MAX_OVERLAY_ALPHA/2 + MAX_OVERLAY_ALPHA));
+				
+				c.drawBitmap(overlayRadial, new Rect(0, 0, overlayRadial.getWidth(), overlayRadial.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
+				
+				GameUI.scratchPaint.setAlpha(255);
 								
 				// TEMP DRAWING STUFF
 				GameUI.scratchPaint.setColor(Color.RED);
