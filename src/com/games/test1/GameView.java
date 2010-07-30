@@ -76,13 +76,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	public ASTRAALRoot mRoot;
 
 	public Bitmap tempImage;
+
 	
 	public static Typeface captionTypeface;
 	public static Bitmap iconCompass;
 	public static Bitmap iconJournal;
 	public static Bitmap imageNavigatorRight;
 	public static Bitmap iconInventory;
-	public static Bitmap overlayRadial;
+	public Bitmap overlayRadial;
+	public Bitmap overlayStress;
+
 	
 	/**
 	 * Thread for the actual game logic and rendering.
@@ -156,6 +159,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
 			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
+			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect);
 	
 
 			// Make sure we don't start trying to draw anything, not until startGame
@@ -1150,6 +1154,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				GameUI.scratchPaint.setAlpha((int) (Math.sin(mFrequency * 2 * Math.PI * t) * MAX_OVERLAY_ALPHA/2 + MAX_OVERLAY_ALPHA));
 				
 				c.drawBitmap(overlayRadial, new Rect(0, 0, overlayRadial.getWidth(), overlayRadial.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
+				
+				GameUI.scratchPaint.setAlpha((int) (Math.sin(mFrequency * 2 * Math.PI * t) * 100 + 155)); 
+				
+				c.drawBitmap(overlayStress, new Rect(0, 0, overlayStress.getWidth(), overlayStress.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
 				
 				GameUI.scratchPaint.setAlpha(255);
 								
