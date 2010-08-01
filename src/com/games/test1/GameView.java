@@ -1086,8 +1086,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private static final float 	SANITY_MINIGAME_STARTING_FREQUENCY = 2.0f;
 			private static final float 	SANITY_MINIGAME_STEP_SIZE = 0.2f;
 			private static final float 	SANITY_MINIGAME_ENDING_FREQUENCY = 1.0f;
-			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 5;
-			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.04f;
+			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 3;
+			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.07f;
 			private static final float WAVELENGTH_MULTIPLIER = 20f;
 			private static final double MAX_OVERLAY_ALPHA = 100;
 			
@@ -1128,8 +1128,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			public void draw(Canvas c) {
 				
-				c.drawColor(Color.WHITE);				
-				
 				int A = 100;
 				float t = getTimeInSeconds();
 				
@@ -1151,17 +1149,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					c.restore();
 				}
 				
+				// Draw the overlays.
 				GameUI.scratchPaint.setAlpha((int) (Math.sin(mFrequency * 2 * Math.PI * t) * MAX_OVERLAY_ALPHA/2 + MAX_OVERLAY_ALPHA));
 				
 				c.drawBitmap(overlayRadial, new Rect(0, 0, overlayRadial.getWidth(), overlayRadial.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
 				
-				GameUI.scratchPaint.setAlpha((int) (Math.sin(mFrequency * 2 * Math.PI * t) * 100 + 155)); 
+				Log.w("Miskatonic", "percentComplete: " + getPercentComplete());
+				GameUI.scratchPaint.setAlpha((int) ((Math.sin(mFrequency * 2 * Math.PI * t) * 100 + 155) * ( 1 - getPercentComplete()))); 
 				
 				c.drawBitmap(overlayStress, new Rect(0, 0, overlayStress.getWidth(), overlayStress.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
 				
 				GameUI.scratchPaint.setAlpha(255);
 								
 				// TEMP DRAWING STUFF
+				/*
 				GameUI.scratchPaint.setColor(Color.RED);
 				GameUI.scratchPaint.setTextAlign(Paint.Align.LEFT);
 				c.drawRect(0,0,(float) (A + A * Math.sin(mFrequency * 2 * Math.PI * t)),50, GameUI.scratchPaint);
@@ -1171,9 +1172,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					
 					c.drawText("" + mPlayerAverageInterval + " vs " + (1000f / mFrequency), 10, 120, GameUI.scratchPaint);
 				}
+				*/
 				
 				
-				
+			}
+			
+			private float getPercentComplete() {
+				return (float) (mFrequency - SANITY_MINIGAME_STARTING_FREQUENCY) / (SANITY_MINIGAME_ENDING_FREQUENCY - SANITY_MINIGAME_STARTING_FREQUENCY);
 			}
 
 			private float getTimeInSeconds() {

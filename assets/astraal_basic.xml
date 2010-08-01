@@ -1,5 +1,5 @@
 <ASTRAAL version='0.1' gamename='Test Game'>
-	<RESOURCES id="main" preload="true">
+	<RESOURCES id="first_area" preload="true">
 		<ANIMATION id="caption_card_bg" fps="1" width="800" height="600" framecount="1">
 			captioncard
 		</ANIMATION>
@@ -17,6 +17,18 @@
 		</ANIMATION>
 		<ANIMATION id="bg_lab2" fps="0" width="800" height="446" framecount="1">
 			lab2
+		</ANIMATION>
+		<ANIMATION id="bg_lab_hallway" fps="0" width="800" height="480" framecount="1">
+			lab_hallway
+		</ANIMATION>
+		<ANIMATION id="bg_lab_storage1" fps="0" width="800" height="480" framecount="1">
+			lab_storage1
+		</ANIMATION>
+		<ANIMATION id="bg_lab_storage2" fps="0" width="800" height="480" framecount="1">
+			lab_storage2
+		</ANIMATION>
+		<ANIMATION id="bg_lab_hallway_door" fps="0" width="800" height="480" framecount="1">
+			lab_hallway_door
 		</ANIMATION>
 	</RESOURCES>
 	<RESOURCES id="set_two">	
@@ -38,8 +50,9 @@
 		</JOURNAL>
 	</JOURNALS>
 	
-	<SCENE id="scene_lab1" resourceblock="main" background="bg_lab1" width="800" height="480">
-		<NAVIGATION position="right" to_scene="scene_lab2"/>		
+	<SCENE id="scene_lab1" resourceblock="first_area" background="bg_lab1" width="800" height="480">
+		<NAVIGATION position="right" to_scene="scene_lab2"/>
+		<NAVIGATION position="left" to_scene="scene_lab_hallway"/>			
 	
 		<OBJECT id="lab_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">				
@@ -83,7 +96,7 @@
 			</EVENT>
 		</OBJECT>		
 	</SCENE>
-	<SCENE id="scene_lab2" resourceblock="main" background="bg_lab2" width="800" height="446">
+	<SCENE id="scene_lab2" resourceblock="first_area" background="bg_lab2" width="800" height="446">
 		<NAVIGATION position="left" to_scene="scene_lab1"/>		
 
 		<OBJECT id="lab2_dummy" x="0" y="0" width="0" height="0" sprite="">
@@ -94,5 +107,16 @@
 				Call doOnReturnToMainGame("Call enterSanityMiniGame();");								 
 			</EVENT>
 		</OBJECT>			
+	</SCENE>
+	<SCENE id="scene_lab_hallway" resourceblock="first_area" background="bg_lab_hallway" width="800" height="480">
+		<NAVIGATION position="left" to_scene="scene_lab_storage1"/>	
+	</SCENE>
+	<SCENE id="scene_lab_storage1" resourceblock="first_area" background="bg_lab_storage1" width="800" height="480">
+		<NAVIGATION position="left" to_scene="scene_lab_storage2"/>
+	</SCENE>
+	<SCENE id="scene_lab_storage2" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
+		<NAVIGATION position="right" to_scene="scene_lab_storage1"/>
+	</SCENE>
+	<SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
 	</SCENE>
 </ASTRAAL>
