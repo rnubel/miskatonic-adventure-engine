@@ -159,7 +159,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
 			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
-			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect);
+			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect2);
 	
 
 			// Make sure we don't start trying to draw anything, not until startGame
@@ -1133,7 +1133,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				
 				
 				float xShift, nextXShift = 0f;
-				for (int i = 0; i <= NUM_SLICES_TO_DRAW; i++) {
+				for (int i = 0; i <= NUM_SLICES_TO_DRAW; i++) { 
 					c.save();
 					xShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + i * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;					
 					nextXShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + (i+1) * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;
@@ -1155,7 +1155,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				c.drawBitmap(overlayRadial, new Rect(0, 0, overlayRadial.getWidth(), overlayRadial.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
 				
 				Log.w("Miskatonic", "percentComplete: " + getPercentComplete());
-				GameUI.scratchPaint.setAlpha((int) ((Math.sin(mFrequency * 2 * Math.PI * t) * 100 + 155) * ( 1 - getPercentComplete()))); 
+				GameUI.scratchPaint.setAlpha((int) ((Math.sin(mFrequency * 2 * Math.PI * t) * 50 + 205) * ( 1 - getPercentComplete()))); 
 				
 				c.drawBitmap(overlayStress, new Rect(0, 0, overlayStress.getWidth(), overlayStress.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
 				
