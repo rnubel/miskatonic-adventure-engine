@@ -13,10 +13,12 @@ import com.games.test1.aal.*;
 class NavigationCue extends DrawnObject {
 	public static final int NAVIGATOR_WIDTH = 60;
 	public static final int NAVIGATOR_HEIGHT = 300;
-	
+
 	public enum Direction {
 		Left,
-		Right
+		Right,
+		Bottom,
+		Top
 	}
 
 	private Direction mDirection;
@@ -35,9 +37,22 @@ class NavigationCue extends DrawnObject {
 	public NavigationCue(int x, int y, String sceneID, Direction direction) {
 		super(x, y, NAVIGATOR_WIDTH, NAVIGATOR_HEIGHT);
 	
-		if (direction == Direction.Left) {
-			mRot = 180.f;
+		// Rotate the image to match our direction. We avoid setRot() just to save a little time.
+		switch (direction) {
+		case Left:
+			mRot = 180.0f;
+			break;
+		case Top:
+			mRot = 270.0f;
+			break;
+		case Bottom:
+			mRot = 90.0f;
+			break;
+		default:
+			mRot = 0.0f;
+			break;
 		}
+
 		mAnimation = getNavigatorAnimation();	
 			
 		// Attach the changeScene event, going through AAL.

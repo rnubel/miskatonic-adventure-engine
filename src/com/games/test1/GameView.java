@@ -679,12 +679,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				// TODO: Extend DrawnObject to add a Navigator, which handles adding the AAL script and such.
 				// Position the Navigator (FIXME: Abstract this along with GameUI's positioning)
 				int x = 0, y = mScene.getHeight()/2 - NavigationCue.NAVIGATOR_HEIGHT/2;
-				NavigationCue.Direction dir = NavigationCue.Direction.Right;
+				
+				NavigationCue.Direction dir = null;
+				// Position the cue correctly. TODO: Extract function.
 				if (side.equals("left")) {
 					x = 0;
 					dir = NavigationCue.Direction.Left;
 				} else if (side.equals("right")) {					
 					x = mScene.getWidth() - NavigationCue.NAVIGATOR_WIDTH;					
+					dir = NavigationCue.Direction.Right;
+				} else if (side.equals("bottom")) {
+					// Rotation will happen afterwards, so the positioning code is strange.
+					x = mScene.getWidth()/2 - NavigationCue.NAVIGATOR_WIDTH/2;
+					y = mScene.getHeight() - NavigationCue.NAVIGATOR_HEIGHT/2 - NavigationCue.NAVIGATOR_WIDTH/2;
+					dir = NavigationCue.Direction.Bottom;
+				} else if (side.equals("top")) {
+					x = mScene.getWidth()/2 - NavigationCue.NAVIGATOR_WIDTH/2;
+					y = 0;
+					dir = NavigationCue.Direction.Top;
 				}
 
 				mScene.addObject(new NavigationCue(x, y, sceneID, dir));
