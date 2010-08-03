@@ -112,11 +112,13 @@
 		<NAVIGATION position="left" to_scene="scene_lab_storage1"/>	
 	</SCENE>
 	<SCENE id="scene_lab_storage1" resourceblock="first_area" background="bg_lab_storage1" width="800" height="480">
-		<NAVIGATION position="left" to_scene="scene_lab_storage2"/>
+    <NAVIGATION position="left" to_scene="scene_lab_storage2"/>
+    <NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
 	</SCENE>
 	<SCENE id="scene_lab_storage2" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
 		<NAVIGATION position="right" to_scene="scene_lab_storage1"/>
 	</SCENE>
-	<SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
+  <SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
+    <NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
 	</SCENE>
 </ASTRAAL>
