@@ -62,7 +62,7 @@ import android.widget.TextView;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	/** Handle to the application context, used to e.g. fetch Drawables. */
-	public static Context context;
+	public Context context;
 
 	/** Thread handling the actual game logic & rendering. */
 	public GameThread thread;
@@ -72,8 +72,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	public int mCanvasHeight;
 
 	private Bundle mStateBundle;
-
-	public ASTRAALRoot mRoot;
 
 	public Bitmap tempImage;
 
@@ -127,6 +125,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 		/** Loading must be delayed, so save the bundle temporarily. */
 		private Bundle mBundleToLoad;
+
+		public ASTRAALRoot mRoot;
 
 		
 
@@ -210,7 +210,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					w, 
 					h, 
 					getMainGameState().getScene()));
-
+			
+			// Zoom in as needed.
+			if (getCurrentScene().getHeight() < h) {
+				getMainGameState().getCamera().setMag((float) h / getCurrentScene().getHeight());
+			}
 		}		
 
 		private WindowManager getSystemService(String windowService) {
@@ -1401,11 +1405,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				
 			}
 		}
+		
+		unsetStaticResources();
+		
+		Log.w("Miskatonic", "LIFECYCLE: Closing thread");
+
 	}
+
+	private void unsetStaticResources() {		
+		iconCompass = null;
+		iconJournal = null;
+		imageNavigatorRight = null;
+		iconInventory = null;
+
+		ASTRAALResourceFactory.cleanUp();
+	
+		System.gc();		
+	}
+
 
 	/** Internally save our state. */
 	private void saveState() {
 		mStateBundle = new Bundle();
 		thread.saveToBundle(mStateBundle);
+	}
+	
+	@Override
+	public void finalize() {
+		Log.w("Miskatonic", "LIFECYCLE: Destroying");
 	}
 }

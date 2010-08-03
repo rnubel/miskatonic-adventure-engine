@@ -26,4 +26,9 @@ public class ASTRAALResourceFactory {
 		ASTRAALResAnimation resAnim = (ASTRAALResAnimation) resourceMap.get(id);		
 		return (Animation) resAnim.getResource();
 	}
+	
+	/** Free memory. */
+	public static void cleanUp() {
+		resourceMap.clear();
+	}
 }

@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.games.test1.Animation;
 import com.games.test1.Resource;
@@ -63,6 +64,7 @@ public class ASTRAALResAnimation extends ASTRAALResource {
 	 * @param res - Resources context to use. 
 	 */
 	public void loadResource(Resources res) {		
+		Log.w("Miskatonic", "Loading resource: " + mSpriteID);
 		Bitmap bmp = BitmapFactory.decodeResource(res, mImageID, null);
 		mResource = new Animation(bmp, mFrameCount, mWidth, mHeight, mFPS);
 		((Animation) mResource).setSpriteID(mSpriteID);

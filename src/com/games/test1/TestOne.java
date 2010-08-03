@@ -5,6 +5,7 @@ import com.games.test1.GameView.GameThread;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Debug;
+import android.util.Log;
 import android.view.Window;
 
 /**
@@ -44,6 +45,7 @@ public class TestOne extends Activity {
 	 */
 	@Override
 	protected void onPause() {
+		Log.w("Miskatonic", "LIFECYCLE: Pausing");
 		super.onPause();
 		mGameView.getThread().pause(); // pause game when Activity pauses
 	}
@@ -52,6 +54,7 @@ public class TestOne extends Activity {
 	 * Invoked when the Activity regains user focus.
 	 */
 	protected void onResume() {
+		Log.w("Miskatonic", "LIFECYCLE: Resuming");
 		super.onResume();
 	}
 
@@ -59,14 +62,17 @@ public class TestOne extends Activity {
 	 * Invoked when the Activity is temporarily shut down.
 	 */
 	protected void onStop() {
+		Log.w("Miskatonic", "LIFECYCLE: Stopping");
 		super.onStop();
-		System.gc();		
+		mGameView = null;
+		System.gc();
 	}	
 
 	/**
 	 * Invoked when the Activity is started or restarted.
 	 */
 	protected void onStart() {
+		Log.w("Miskatonic", "LIFECYCLE: Starting");
 		super.onStart();    	
 		
 		//Debug.startMethodTracing("profile");
@@ -76,6 +82,7 @@ public class TestOne extends Activity {
 	 * Invoked when the Activity is restarted.
 	 */
 	protected void onRestart() {
+		Log.w("Miskatonic", "LIFECYCLE: Restarting");
 		super.onRestart();
 	}
 
