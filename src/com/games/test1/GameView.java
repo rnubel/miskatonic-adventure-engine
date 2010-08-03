@@ -533,7 +533,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		private synchronized void loadAndStartMainGameState() {
 			mActiveState = new com.games.test1.State();
-			setState(StateType.Main);
+			setState(StateType.Loading);
 			getMainGameState().load();			
 		}
 
@@ -1067,7 +1067,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public void setupUI() {
 				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
 				mUI.addControl(new UIControlButton(100, 40, "Start Game", new UIEvent() {
-					public void execute(GameThread t) {						
+					public void execute(GameThread t) {		
+						t.setState(StateType.Loading);
 						t.loadAndStartMainGameState();						
 					}
 				}),GameUI.POSITION_CENTER);
