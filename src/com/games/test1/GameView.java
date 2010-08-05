@@ -633,17 +633,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public void setupUI() {
 				// Create the UI.
 				mUI = new GameUI(GameView.this.getWidth(), GameView.this.getHeight(), GameThread.this);
-				mUI.addControl(new UIControlButton(25, 25, "+", new UIEvent() {
-					public void execute(GameThread game) {
-						game.adjustZoom(true);
-					}					
-				}), GameUI.POSITION_TOPRIGHT);
-				
-				mUI.addControl(new UIControlButton(25, 25, "-", new UIEvent() {
-					public void execute(GameThread game) {
-						game.adjustZoom(false);
-					}						
-				}), GameUI.POSITION_BOTTOMRIGHT);
 				
 				mUI.addControl(new UIControlButtonImage(48, 48, iconInventory, new UIEvent() {
 					public void execute(GameThread game) {
