@@ -3,12 +3,6 @@
 		<ANIMATION id="caption_card_bg" fps="1" width="800" height="600" framecount="1">
 			captioncard
 		</ANIMATION>
-		<ANIMATION id="spr1" fps="4" width="40" height="40" framecount="2">
-			lcglowingeldersign		
-		</ANIMATION>
-		<ANIMATION id="spr2" fps="4" width="40" height="80" framecount="2">		
-			lcglowingeldersign
-		</ANIMATION>
 		<ANIMATION id="spr_star" fps="4" width="32" height="32" framecount="1">		
 			star
 		</ANIMATION>
@@ -35,8 +29,7 @@
 	</RESOURCES>
 	
 	<ITEMS>
-		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>
-		<ITEM id="item_rune" sprite="spr1" name="Rune">A glowing rune.</ITEM>	
+		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>			
 	</ITEMS>
 	
 	<JOURNALS>
@@ -93,7 +86,7 @@
 		<OBJECT id="testtubes" x="425" y="198" width="48" height="75" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Test tubes with plumes of dark fluid swirled within; streaks on liquid marble.");
-			</EVENT>
+			</EVENT> 
 		</OBJECT>		
 	</SCENE>
 	<SCENE id="scene_lab2" resourceblock="first_area" background="bg_lab2" width="800" height="446">
