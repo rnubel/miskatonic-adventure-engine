@@ -45,13 +45,15 @@
 	
 	<SCENE id="scene_lab1" resourceblock="first_area" background="bg_lab1" width="800" height="480">
 		<NAVIGATION position="right" to_scene="scene_lab2"/>
-		<NAVIGATION position="left" to_scene="scene_lab_hallway"/>			
+		<!--  <NAVIGATION position="left" to_scene="scene_lab_hallway"/> -->			
 	
 		<OBJECT id="lab_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">				
 				Call showCaptionCard("I awoke, as if from a deep slumber, but with little of the ease of waking that one would expect after such a sleep. Breath entered my body, drawn in reflexively, forcing its way into my stiffened chest.", "I coughed, the spasm racking my frame but bringing feeling to my limbs, which felt in some way different -- perhaps it had been long indeed since I fell asleep.", "Opening my eyes, the dim lighting of my surroundings caused me no discomfort. However, the haze of my sudden animation obscured the nature of the sight, and only gradually did my vision truly come into focus.");			
 				Call fadeIn(2);
 				Call unlockJournalPage("personal", "one");
+				
+				Let lab_enteredLab2 = False;
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_jar" x="151" y="96" width="72" height="72" sprite="">
@@ -90,15 +92,35 @@
 		</OBJECT>	
 		<OBJECT id="lab_generator" x="514" y="96" width="176" height="191" sprite="">
 			<EVENT event="onclick">
-				Call showCaption(" I recognize this machine: it's a generator. But the electricity seems to be running without the aid of the generator -- ", "Perhaps someone needed additional power, or a backup for something of grave importance.", "The large blood stain on the front mars the otherwise-pristine machinery...");
+				Call showCaption("I recognize this machine: it's a generator. But the electricity seems to be running without the aid of the generator -- ", "Perhaps someone needed additional power, or a backup for something of grave importance.", "The large blood stain on the front mars the otherwise-pristine machinery...");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_bloodstains" x="509" y="289" width="246" height="96" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("The blood itself doesn’t perturb me, but the quantity and fashion in which the stains are arrayed is unsettling.");
 			</EVENT>
 		</OBJECT>	
+		<OBJECT id="lab_cables" x="43" y="335" width="129" height="40" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("The thick electrical cords are heavily frayed at the ends, as if they had been blown apart violently.");
+			</EVENT>
+		</OBJECT>	
+		<OBJECT id="lab_leftdoor" x="14" y="106" width="57" height="208" sprite="">
+			<EVENT event="onclick">
+				If [lab_enteredLab2 == False] Then
+					Call showCaption("I need to look around more.");
+				Else
+					Call changeScene("scene_lab_hallway");
+				End
+			</EVENT>
+		</OBJECT>			
 	</SCENE>
 	<SCENE id="scene_lab2" resourceblock="first_area" background="bg_lab2" width="800" height="446">
 		<NAVIGATION position="left" to_scene="scene_lab1"/>		
 
 		<OBJECT id="lab2_dummy" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
+				Let lab_enteredLab2 = True;
 				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
 								 "The macabre scene before me assaulted all my senses, yet no effort of mine could force my gaze away. My mind began to reel, and my tenuous grip upon my consciousness began to slip; having just woken from a black oblivion, I found myself in danger of slipping into it once again.",
 								 "Frantically, I struggled to regain control of my sanity...");
