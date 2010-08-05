@@ -54,12 +54,12 @@
 				Call unlockJournalPage("personal", "one");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="jar" x="151" y="96" width="72" height="72" sprite="">
+		<OBJECT id="lab_jar" x="151" y="96" width="72" height="72" sprite="">
 			<EVENT event="onclick">				
 				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");				
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="vials" x="158" y="207" width="61" height="45" sprite="">
+		<OBJECT id="lab_vials" x="158" y="207" width="61" height="45" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("The glass vials on the shelves contain a faintly-glowing, green fluid... though the glow is obscured by streaks of dirt on the glass.", "An old label on the first glass reads 'Property of H. West,' but holds no indications of the content. The seal on the vials are unbroken.");
 			</EVENT>
@@ -67,27 +67,32 @@
 				
 			</EVENT>
 		</OBJECT>		
-		<OBJECT id="skull" x="232" y="189" width="47" height="53" sprite="">
+		<OBJECT id="lab_skull" x="232" y="189" width="47" height="53" sprite="">
 			<EVENT event="onclick">
-				Call showCaption("A human skull. Perhaps this place's owner was a lover of Shakespeare.");
+				Call showCaption("A human skull. Most likely, a real one.");
 				Call giveItem("item_star");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="booktop" x="316" y="114" width="37" height="52" sprite="">
+		<OBJECT id="lab_booktop" x="316" y="114" width="37" height="52" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("This book is entitled 'Unaussprechlichen Kulten' -- I've heard of it, but never read it. Most libraries have banned it from their shelves.");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="booksbottom" x="364" y="189" width="61" height="53" sprite="">
+		<OBJECT id="lab_booksbottom" x="364" y="189" width="61" height="53" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Books of incredible age, all of which look too fragile to touch, much less open.");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="testtubes" x="425" y="198" width="48" height="75" sprite="">
+		<OBJECT id="lab_testtubes" x="425" y="198" width="48" height="75" sprite="">
 			<EVENT event="onclick">
-				Call showCaption("Test tubes with plumes of dark fluid swirled within; streaks on liquid marble.");
+				Call showCaption("Test tubes with plumes of dark fluid swirls within: streaks on liquid marble.");
 			</EVENT> 
-		</OBJECT>		
+		</OBJECT>	
+		<OBJECT id="lab_generator" x="514" y="96" width="176" height="191" sprite="">
+			<EVENT event="onclick">
+				Call showCaption(" I recognize this machine: it's a generator. But the electricity seems to be running without the aid of the generator -- ", "Perhaps someone needed additional power, or a backup for something of grave importance.", "The large blood stain on the front mars the otherwise-pristine machinery...");
+			</EVENT>
+		</OBJECT>	
 	</SCENE>
 	<SCENE id="scene_lab2" resourceblock="first_area" background="bg_lab2" width="800" height="446">
 		<NAVIGATION position="left" to_scene="scene_lab1"/>		
