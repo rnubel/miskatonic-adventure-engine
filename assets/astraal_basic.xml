@@ -53,12 +53,13 @@
 				Call fadeIn(2);
 				Call unlockJournalPage("personal", "one");
 				
+				Let lab_hadMemoryCaption = False;
 				Let lab_enteredLab2 = False;
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_jar" x="151" y="96" width="72" height="72" sprite="">
 			<EVENT event="onclick">				
-				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");				
+				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");								
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_vials" x="158" y="207" width="61" height="45" sprite="">
@@ -118,7 +119,7 @@
 	<SCENE id="scene_lab2" resourceblock="first_area" background="bg_lab2" width="800" height="446">
 		<NAVIGATION position="left" to_scene="scene_lab1"/>		
 
-		<OBJECT id="lab2_dummy" x="0" y="0" width="0" height="0" sprite="">
+		<OBJECT id="lab2_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
 				Let lab_enteredLab2 = True;
 				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
@@ -127,6 +128,30 @@
 				Call doOnReturnToMainGame("Call enterSanityMiniGame();");								 
 			</EVENT>
 		</OBJECT>			
+		
+		<OBJECT id="lab2_body" x="156" y="73" width="546" height="144" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("The still-decomposing corpse of some poor soul lies on the table, limbs splayed and twisted in terrible agony. From what little of my ragged memory pertains to physiological knowledge,", " would estimate that he had lain dead for no more than a couple months. I can’t help but speculate at the cause of his death... was I involved? If not, why am I here?");
+			</EVENT>
+		</OBJECT>
+		
+		<OBJECT id="lab2_restraint1" x="282" y="213" width="46" height="57" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
+			</EVENT>
+		</OBJECT>
+		
+		<OBJECT id="lab2_restraint2" x="475" y="220" width="46" height="57" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
+			</EVENT>
+		</OBJECT>
+		
+		<OBJECT id="lab2_restraint3" x="611" y="221" width="46" height="57" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
+			</EVENT>
+		</OBJECT>
 	</SCENE>
 	<SCENE id="scene_lab_hallway" resourceblock="first_area" background="bg_lab_hallway" width="800" height="480">
 		<NAVIGATION position="left" to_scene="scene_lab_storage1"/>	
