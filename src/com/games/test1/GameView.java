@@ -504,6 +504,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				return false;
 			}			
 		}
+		
+		/** Save the game to a given save slot. */
+		public boolean saveToSlot(int slotNum) {
+			return saveToFile("savegame_" + slotNum);			
+		}
+		
+		/** Load the game from a given save slot. */
+		public boolean loadFromSlot(int slotNum) {
+			return saveToFile("savegame_" + slotNum);			
+		}
 
 
 		/**
@@ -600,6 +610,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private Inventory mInventory = new Inventory();
 			/** Identifies which item the user has picked up and is trying to use. */
 			private InventoryItem mSelectedInventoryItem = null;
+
+			private UIControlCaption mHalfCaptionControl;
 			
 			public MainGameState() { 
 			
@@ -656,9 +668,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			/** Show a caption on the screen. */
 			public void showHalfCaption(Vector<String> captions) {
 				mUI.removeControlsFromPosition(GameUI.POSITION_BOTTOM);
-				mUI.addControl(new UIControlCaption((int) (getWidth() * .8), 
-						(int)(getHeight() * .25),captions), GameUI.POSITION_BOTTOM, false);				
+				mHalfCaptionControl = new UIControlCaption(
+							(int) (getWidth() * .8), 
+							(int)(getHeight() * .25),captions);
+				mUI.addControl(mHalfCaptionControl, GameUI.POSITION_BOTTOM, false);				
 			}
+			
+			/** Add to our list of half-captions. */
+			public void addToHalfCaption(Vector<String> captions) {
+				mHalfCaptionControl.addCaptions(captions);
+			}	
 
 			/** Open the inventory panel. */
 			public void showInventory() {
@@ -1295,7 +1314,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			public StateType getType() { return StateType.Loading; }
 
-		}		
+		}
+
+	
 	} // GameThread
 
 	/**

@@ -59,12 +59,20 @@
 		</OBJECT>
 		<OBJECT id="lab_jar" x="151" y="96" width="72" height="72" sprite="">
 			<EVENT event="onclick">				
-				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");								
+				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End								
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_vials" x="158" y="207" width="61" height="45" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("The glass vials on the shelves contain a faintly-glowing, green fluid... though the glow is obscured by streaks of dirt on the glass.", "An old label on the first glass reads 'Property of H. West,' but holds no indications of the content. The seal on the vials are unbroken.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End		
 			</EVENT>
 			<EVENT event="oncombine">
 				
@@ -74,36 +82,64 @@
 			<EVENT event="onclick">
 				Call showCaption("A human skull. Most likely, a real one.");
 				Call giveItem("item_star");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_booktop" x="316" y="114" width="37" height="52" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("This book is entitled 'Unaussprechlichen Kulten' -- I've heard of it, but never read it. Most libraries have banned it from their shelves.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_booksbottom" x="364" y="189" width="61" height="53" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Books of incredible age, all of which look too fragile to touch, much less open.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_testtubes" x="425" y="198" width="48" height="75" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Test tubes with plumes of dark fluid swirls within: streaks on liquid marble.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT> 
 		</OBJECT>	
 		<OBJECT id="lab_generator" x="514" y="96" width="176" height="191" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("I recognize this machine: it's a generator. But the electricity seems to be running without the aid of the generator -- ", "Perhaps someone needed additional power, or a backup for something of grave importance.", "The large blood stain on the front mars the otherwise-pristine machinery...");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_bloodstains" x="509" y="289" width="246" height="96" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("The blood itself doesn’t perturb me, but the quantity and fashion in which the stains are arrayed is unsettling.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT>
 		</OBJECT>	
 		<OBJECT id="lab_cables" x="43" y="335" width="129" height="40" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("The thick electrical cords are heavily frayed at the ends, as if they had been blown apart violently.");
+				If [lab_hadMemoryCaption == False] Then
+					Let lab_hadMemoryCaption = True;
+					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
+				End
 			</EVENT>
 		</OBJECT>	
 		<OBJECT id="lab_leftdoor" x="14" y="106" width="57" height="208" sprite="">

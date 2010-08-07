@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.games.test1.CameraEffectFade;
 import com.games.test1.DrawnObject;
@@ -205,6 +206,18 @@ public class AALExecutionState {
 			mExecutor.getGame().showHalfCaption(captions);
 		} else
 
+		// showMoreCaptions [message]: ADD MORE CAPTIONS TO CURRENT CAPTION LIST.
+		if (functionName.equals("showMoreCaptions")) {
+			// Dynamically read in the arguments. If we need any special flags/etc, put
+			// those first.
+			Vector<String> captions = new Vector<String>();
+			for (AALValue v : args) {
+				captions.add((String) v.getValue());
+			}
+			
+			mExecutor.getGame().getMainGameState().addToHalfCaption(captions);
+		} else
+			
 		// fadeIn [speed assumed 5]: FADE IN FROM BLACK.
 		if (functionName.equals("fadeIn")) {
 			int speed = (args.length > 0 ? (Integer) args[0].getValue() : 5);

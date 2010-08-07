@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.games.test1.GameView;
 import com.games.test1.Utility;
@@ -28,6 +29,13 @@ public class UIControlCaption extends UIControl {
 		setupCaptionFont();
 		computeTextHeight();
 		updateCaption();
+	}
+	
+	/** Append to our list of captions. */	
+	public void addCaptions(Vector<String> captions) {		
+		for (String caption : captions) {
+			mCaptions.add(caption);
+		}
 	}
 	
 	/** Trigger the event attached to this button. */
@@ -91,4 +99,6 @@ public class UIControlCaption extends UIControl {
 			}
 		}
 	}
+
+	
 }
