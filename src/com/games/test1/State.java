@@ -33,6 +33,12 @@ public class State {
 		return mType;
 	}
 
+	/** 
+	 * 	Callback for when a key is pressed down. Reliance on key
+	 *  events is discouraged when possible, as not all devices 
+	 *  have keyboards (i.e., the Archos). 
+	 */
+	public void onKeyDown(int keyCode) { }
 	
 	/** 
 	 * Input callback for mouse press. I might use a more 

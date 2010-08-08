@@ -10,12 +10,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.Vector;
 
 import org.xml.sax.InputSource;
 
 import com.games.test1.GameView.GameThread.BasicGameState;
+import com.games.test1.GameView.GameThread.MainMenuState;
 import com.games.test1.aal.AALExecutionState;
 import com.games.test1.astraal.*;
 import com.games.test1.ui.GameUI;
@@ -128,6 +130,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 		public ASTRAALRoot mRoot;
 
+		private Stack<StateType> mStateStack = new Stack<StateType>();
+
 		
 
 
@@ -217,11 +221,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}		
 
-		private WindowManager getSystemService(String windowService) {
-			return null;
-		}
-
-
 		/**
 		 * Set the background within the game thread to the specified animation.
 		 * @param animation
@@ -291,6 +290,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			return (JournalState)(getStateFromType(StateType.Journal));
 		}
 		
+		/**
+		 * Helper method to get the main menu state instance, whether or not
+		 * it's currently being run.
+		 */		
+		public MainMenuState getMainMenuState() {
+			return (MainMenuState)(getStateFromType(StateType.MainMenu));
+		}
 
 		/** Switch to the caption state and display the given messages in order. */
 		public void showFullCaption(Vector<String> captions) {
@@ -338,10 +344,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/**
 		 * Set the active state of the game the given state instance.
-		 * @remark state should be obtained from the getInstance()
-		 * method of a State. Take care to handle the possibility of
-		 * getInstance() returning null, as the full Singleton pattern
-		 * cannot be implemented in this context.
 		 * @param state State to set as active. The currently-active
 		 * state will be stopped first.
 		 */
@@ -353,6 +355,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			// Start up the new one.
 			mActiveState = getStateFromType(newState);
 			mActiveState.start();			
+		}
+		
+		/**
+		 * Similar to setState, but adds to a stack of StateTypes so that
+		 * we can return if popState is called. 
+		 */
+		public void pushState(StateType newState) {
+			mStateStack.push(mActiveState.getType());
+			setState(newState);
+		}
+		
+		/** 
+		 * Returns us to the previous state. If none exists, we do
+		 * nothing.
+		 */
+		public void popState() {
+			if (!mStateStack.empty()) {
+				setState(mStateStack.pop());
+			}
 		}
 
 		/**
@@ -447,12 +468,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			synchronized (mSurfaceHolder) {
 				mCanvasWidth = width;
 				mCanvasHeight = height;
-			
-			// At this point we don't have a game state. The plus side of that is that
-			// the load() routine in MGS can safely use getWidth()/getHeight() and we
-			// don't need this cludge in the first place. Left here in case we do =P	
-			//	getMainGameState().getCamera().setWidth(width);
-			//	getMainGameState().getCamera().setHeight(height);
 			}                        
 		}
 		
@@ -482,6 +497,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				FileOutputStream out = 
 						context.openFileOutput(filename, Context.MODE_WORLD_WRITEABLE);
 				mExecutor.save(out);
+				out.close();
 												
 				return true;
 			} catch (Exception e) {
@@ -497,7 +513,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				FileInputStream in = 
 						context.openFileInput(filename);
 				mExecutor.load(in);
-												
+				in.close();
+				
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -512,7 +529,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Load the game from a given save slot. */
 		public boolean loadFromSlot(int slotNum) {
-			return saveToFile("savegame_" + slotNum);			
+			return loadFromFile("savegame_" + slotNum);			
 		}
 
 
@@ -522,6 +539,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		 */ 
 		public void setRunning(boolean b) {
 			mShouldKeepRunning = b;		
+		}
+		
+		/** Handle a keyDown event. */
+		public void onKeyDown(int keyCode) {
+			Log.w("GameThread", "Key down in GT: " + keyCode);
+			mActiveState.onKeyDown(keyCode);
 		}
 
 		/** Handle a "mouse" down event. */
@@ -545,11 +568,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			mActiveState.onMouseRelease(x, y);			
 		}
 		
-		private synchronized void loadAndStartMainGameState() {
+		/** Load, then start the main game state. */
+		public synchronized void loadAndStartMainGameState() {
 			mActiveState = new com.games.test1.State();
 			setState(StateType.Loading);
 			getMainGameState().load();			
 		}
+		
+		/** Switch to the main menu state, but keep track of what
+		 *  state to to return to.
+		 */
+		public void showMainMenu() {
+			pushState(StateType.MainMenu);
+		}
+		
 
 		/** An abstract state that uses a scene-and-camera system. */
 		public class BasicGameState extends com.games.test1.State {
@@ -623,6 +655,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					mExecutor.executeBuffer();
 			}
 			
+			/** Load resources and scene data. */
 			public void load() {
 				Log.w("Miskatonic",	"Beginning load sequence for main game...");
 				
@@ -633,7 +666,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				if (mBundleToLoad != null) {
 					Log.w("Miskatonic", "Restoring state from Bundle " + mBundleToLoad.toString());
 					mExecutor.loadFromBundle(mBundleToLoad);
-					mBundleToLoad = null;
+					mBundleToLoad = null; 
 				}
 				
 				Log.w("Miskatonic",	"Load complete.");
@@ -736,9 +769,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public StateType getType() { return StateType.Main; }
 
 			
-		
-
-
+			/** Main update loop for the actual game. */
 			public void run() {
 				mScene.updateScene();
 				
@@ -747,6 +778,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					int moveByX = mMouseX - mMouseDownX, 
 					moveByY = mMouseY - mMouseDownY;
 					mCamera.centerAt(mOldCameraCX - moveByX, mOldCameraCY - moveByY);
+				}
+			}
+			
+			@Override
+			public void onKeyDown(int keyCode) { 
+				switch (keyCode) {
+				case KeyEvent.KEYCODE_MENU:
+					/** Show the main menu. */
+					showMainMenu();
+					break;
 				}
 			}
 
@@ -926,7 +967,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private int mTextHeight;
 			
 			public JournalState() {
-				// Precalculate this.
+				// Precalculate the height of our text only once.
 				computeTextHeight();
 				
 				showJournalSelection();
@@ -1061,6 +1102,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Main menu for the game. */
 		public class MainMenuState extends BasicGameState {
+			private static final int MAIN_MENU_BUTTON_HEIGHT = 40;
+			private static final int MAIN_MENU_BUTTON_WIDTH = 140;
 			private GameUI mUI;
 			
 			public MainMenuState() {
@@ -1069,22 +1112,93 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 						mCanvasWidth, mCanvasHeight, 
 						getScene()));
 				
-				setupUI();
+				
 			}
 			
 			public void start() {				
 				Log.w("Miskatonic", "STARTING MAIN MENU STATE ***");
+				showRootMenu();
 			}
 			
-			public void setupUI() {
+			public void showRootMenu() {
 				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
-				mUI.addControl(new UIControlButton(100, 40, "Start Game", new UIEvent() {
+				
+				mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Start New Game", new UIEvent() {
 					public void execute(GameThread t) {		
 						t.setState(StateType.Loading);
 						t.loadAndStartMainGameState();						
 					}
-				}),GameUI.POSITION_CENTER);
+				}),GameUI.POSITION_CENTER, true, 5);
+				
+				// Only show "Resume Game" and "Save Game" if there's a game to be resumed. 
+				if (!(mStateStack.empty())) {
+					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Resume Game", new UIEvent() {
+						public void execute(GameThread t) {		
+							popState();
+						}
+					}),GameUI.POSITION_CENTER, true, 5);
+					
+					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Game", new UIEvent() {
+						public void execute(GameThread t) {		
+							t.getMainMenuState().showSaveMenu();
+						}
+					}),GameUI.POSITION_CENTER, true, 5);
+				}
+		
+				mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Load Game", new UIEvent() {
+					public void execute(GameThread t) {		
+						t.getMainMenuState().showLoadMenu();
+					}
+				}),GameUI.POSITION_CENTER, true, 5);				
 			}
+			
+			public void showSaveMenu() {
+				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
+
+				for (int i = 1; i <= 3; i++) {
+					final int slot = i; // Fuckin' embarrassing lack of closures...
+					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Slot #" + i, new UIEvent() {
+						public void execute(GameThread t) {		
+							t.saveToSlot(slot);
+							// For now, return immediately to the game. Maybe do
+							// something else later.
+							t.popState();
+						}
+					}),GameUI.POSITION_CENTER, true, 5);
+				}
+				
+				mUI.addControl(new UIControlButton((int) (MAIN_MENU_BUTTON_WIDTH * .75), MAIN_MENU_BUTTON_HEIGHT, "Cancel", new UIEvent() {
+					public void execute(GameThread t) {		
+						t.getMainMenuState().showRootMenu();
+					}
+				}),GameUI.POSITION_CENTER, true, 5);					
+				
+			}
+			
+			public void showLoadMenu() {
+				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
+
+				for (int i = 1; i <= 3; i++) {
+					final int slot = i;
+					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Slot #" + i, new UIEvent() {
+						public void execute(GameThread t) {
+							t.setState(StateType.Loading);
+							t.loadAndStartMainGameState();
+							t.setState(StateType.Loading);
+							t.loadFromSlot(slot);
+						}
+					}),GameUI.POSITION_CENTER, true, 5);
+				}
+				
+				mUI.addControl(new UIControlButton((int) (MAIN_MENU_BUTTON_WIDTH * .75), MAIN_MENU_BUTTON_HEIGHT, "Cancel", new UIEvent() {
+					public void execute(GameThread t) {		
+						t.getMainMenuState().showRootMenu();
+					}
+				}),GameUI.POSITION_CENTER, true, 5);		
+			}
+			
+			
+
 			
 			//FIXME: Refactor common UI stuff to a superclass.
 			/** Pass down the click to the UI. */
@@ -1099,10 +1213,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI.draw(c);
 			}
 			
+			@Override
+			public void onKeyDown(int keyCode) { 
+				switch (keyCode) {
+				case KeyEvent.KEYCODE_MENU:
+					/** Return to previous state, if applicable. */
+					popState();
+					break;
+				}
+			}
+			
 			public StateType getType() { return StateType.MainMenu; }
 		} // MainMenuState
 		
-		/** Displays the sanity minigame. */
+		
+		/** Runs the sanity minigame. */
 		public class SanityMiniGameState extends com.games.test1.State {
 			private static final int AMPLITUDE_PADDING = 30;
 			private static final int OSCILLATION_AMPLITUDE_MULTIPLIER = 5;
@@ -1287,7 +1412,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			public void run() {
 				startGame("astraal_basic.xml");	
-				getMainGameState();
+				getMainGameState(); // TODO: Try commenting this out.
 				
 				// If restoring, do not show main menu. Otherwise, do.
 				if (mBundleToLoad != null) {
@@ -1315,8 +1440,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public StateType getType() { return StateType.Loading; }
 
 		}
-
-	
 	} // GameThread
 
 	/**
@@ -1336,6 +1459,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		thread = new GameThread(holder, context, new Handler() {      });
 
 		setFocusable(true); // make sure we get key events
+		setFocusableInTouchMode(true);
 	}
 
 
@@ -1371,6 +1495,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		return true;
 	}
 
+	/** Callback on key events. */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.w("GameView", "Key down in GV: " + keyCode);
+		thread.onKeyDown(keyCode);
+		
+		return true;		
+	}
 
 
 	/** Callback invoked when the surface dimensions change. */

@@ -1,12 +1,14 @@
 package com.games.test1.aal;
 
+import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
  * Polymorphic type to hold values. Can be parceled.
  */
-public class AALValue implements Parcelable {
+public class AALValue implements Parcelable, Serializable {
 	public enum Type {
 		Int,
 		Float,

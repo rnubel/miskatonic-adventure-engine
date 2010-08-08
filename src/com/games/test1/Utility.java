@@ -63,6 +63,10 @@ public class Utility {
 				b.putString(key, (String) o);
 			} else if (o.getClass() == ObjectData[].class) {
 				b.putParcelableArray(key, (ObjectData[]) o);
+			} else if (o.getClass() == JournalPagePath[].class) {
+				b.putParcelableArray(key, (JournalPagePath[]) o);
+			} else if (o.getClass() == String[].class) {
+				b.putStringArray(key, (String[]) o);			
 			} else {
 				// ERROR
 				b.putInt(key, 0);

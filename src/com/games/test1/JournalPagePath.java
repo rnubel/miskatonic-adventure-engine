@@ -1,10 +1,12 @@
 package com.games.test1;
 
+import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /** Struct-like class to store the path to a journal page. */
-public class JournalPagePath implements Parcelable {
+public class JournalPagePath implements Parcelable, Serializable {
 	public String journalID;
 	public String pageID;
 
