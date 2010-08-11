@@ -33,13 +33,16 @@
 	</ITEMS>
 	
 	<JOURNALS>
-		<JOURNAL id="personal" title="Notes">
-			<PAGE id="one" title="Awoken">
-				I've woken up in a strange lab... but I can't remember who I am, or how I got here.
+		<JOURNAL id="notes" title="Scientists' Notes">
+			<PAGE id="one" title="On burning sulfur">
+				Like a typical combustion reaction, sulfur plus oxygen forms sulfur dioxide and vaporized water.
 			</PAGE> 
-			<PAGE id="two" title="The body">
-				Thar be a body on that there table.
+			<PAGE id="two" title="On oxidation">
+				Interesting note: in the presence of vanadium oxide and a surplus of oxygen, sulfur dioxide oxidizes quickly to sulfur trioxide.
 			</PAGE> 
+			<page id="three" title="On condensation">
+				Hydration of sulfur trioxide works as expected. I will need a mechanism to condense the resulting gas, however, into the much-more-usable liquid acid.
+			</page>
 		</JOURNAL>
 	</JOURNALS>
 	
@@ -188,18 +191,57 @@
 				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
 			</EVENT>
 		</OBJECT>
+		
+		<OBJECT id="lab2_sigil" x="225" y="334" width="296" height="57" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("There’s some kind of sigil painted on the floor beneath the table... a circle, with a few lines crossing it.", "It’s certainly no schematic; rather, it looks like an occult symbol. But if this was for some occult ritual, what is the machinery for?");
+			</EVENT>
+		</OBJECT>
+				
+		<!-- TODO: Add cords. -->
 	</SCENE>
 	<SCENE id="scene_lab_hallway" resourceblock="first_area" background="bg_lab_hallway" width="800" height="480">
-		<NAVIGATION position="left" to_scene="scene_lab_storage1"/>	
+		<NAVIGATION position="bottom" to_scene="scene_lab1"/>
+		
+		<OBJECT id="lab_hallway_null" sprite="">
+			<EVENT event="onload">
+				Call showCaptionCard("Hoping to escape the macabre scene behind me, I opened the door of the lab to exit. Beyond me lay a hallway, masonry of the same manner as the lab.", "Thankfully, the hallway presented no grisly sights: simply a barred door straight ahead, and some room to the left."
+			</EVENT>
+		</OBJECT>
+		
+		<OBJECT id="lab_hallway_leftdoor" x="220" y="120" width="36" height="215" sprite="">
+			<EVENT event="onclick">
+				Call changeScene("scene_lab_storage1");
+			</EVENT>
+		</OBJECT>
+		
+		<OBJECT id="lab_hallway_leftdoor" x="326" y="140" width="97" height="129" sprite="">
+			<EVENT event="onclick">
+				Call changeScene("scene_lab_hallway_door");
+			</EVENT>
+		</OBJECT>
 	</SCENE>
 	<SCENE id="scene_lab_storage1" resourceblock="first_area" background="bg_lab_storage1" width="800" height="480">
-    <NAVIGATION position="left" to_scene="scene_lab_storage2"/>
-    <NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
+		<NAVIGATION position="left" to_scene="scene_lab_storage2" />
+		<NAVIGATION position="bottom" to_scene="scene_lab_hallway" />
+		
+		<OBJECT id="lab_lab_storage1_null" sprite="">
+			<EVENT event="onload">
+				Call showCaptionCard("The room which I entered was some sort of storage room for a scientist, or, considering the variety of components, perhaps an alchemist.");
+			</EVENT>
+		</OBJECT>
 	</SCENE>
 	<SCENE id="scene_lab_storage2" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
 		<NAVIGATION position="right" to_scene="scene_lab_storage1"/>
 	</SCENE>
-  <SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
-    <NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
+	<SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_hallway_door" width="800" height="480">
+		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
+		
+		<OBJECT id="lab_hallway_door_null" sprite="">
+			<EVENT event="onload">
+				Call showCaptionCard("Unfortunately, while the door was indeed barred from my side, the bar was locked solidly in place by a triple-bolt lock on the left-hand side.");
+			</EVENT>
+		</OBJECT>
+		
 	</SCENE>
 </ASTRAAL>
