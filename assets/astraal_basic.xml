@@ -40,9 +40,9 @@
 			<PAGE id="two" title="On oxidation">
 				Interesting note: in the presence of vanadium oxide and a surplus of oxygen, sulfur dioxide oxidizes quickly to sulfur trioxide.
 			</PAGE> 
-			<page id="three" title="On condensation">
+			<PAGE id="three" title="On condensation">
 				Hydration of sulfur trioxide works as expected. I will need a mechanism to condense the resulting gas, however, into the much-more-usable liquid acid.
-			</page>
+			</PAGE>
 		</JOURNAL>
 	</JOURNALS>
 	
