@@ -225,15 +225,46 @@
 		<NAVIGATION position="left" to_scene="scene_lab_storage2" />
 		<NAVIGATION position="bottom" to_scene="scene_lab_hallway" />
 		
-		<OBJECT id="lab_lab_storage1_null" sprite="">
+		<OBJECT id="lab_storage1_null" sprite="">
 			<EVENT event="onload">
 				Call showCaptionCard("The room which I entered was some sort of storage room for a scientist, or, considering the variety of components, perhaps an alchemist.");
 			</EVENT>
-		</OBJECT>
-	</SCENE>
+    </OBJECT>
+
+    <OBJECT id="lab_storage1_sulfur" x="460" y="156" w="50" h="40" sprite="">
+      <EVENT event="onclick">
+        Call showCaption("This jar holds a yellow powder. Unscrewing the top, the pungent odor of brimstone wafted out, strong enough to give me cause to retighten the lid.");
+        Call promptTakeItem("chem_sulfur");
+      </EVENT>
+    </OBJECT>
+    
+    <OBJECT id="lab_storage1_carbon" x="512" y="156" w="50" h="40" sprite="">
+      <EVENT event="onclick">
+        Call showCaption("This jar holds a coarse, black powder. I open the container to sniff it, and cough as the blackish soot nearly gets into my lungs.");
+        Call promptTakeItem("chem_carbon");
+      </EVENT>
+    </OBJECT>
+  
+    <OBJECT id="lab_storage1_emptyjar" x="570" y="156" w="50" h="40" sprite="">
+      <EVENT event="onclick">
+        Call showCaption("This jar is empty.");
+      </EVENT>
+    </OBJECT>
+  
+   <OBJECT id="lab_storage1_emptyjar" x="452" y="212" w="79" h="42" sprite="">
+      <EVENT event="onclick">
+        Call showCaption("This jar is empty.");
+      </EVENT>
+    </OBJECT>
+
+  </SCENE>
+
+
 	<SCENE id="scene_lab_storage2" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
 		<NAVIGATION position="right" to_scene="scene_lab_storage1"/>
-	</SCENE>
+  </SCENE>
+
+
 	<SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_hallway_door" width="800" height="480">
 		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
 		
@@ -242,6 +273,6 @@
 				Call showCaptionCard("Unfortunately, while the door was indeed barred from my side, the bar was locked solidly in place by a triple-bolt lock on the left-hand side.");
 			</EVENT>
 		</OBJECT>
-		
-	</SCENE>
+  </SCENE>
+
 </ASTRAAL>

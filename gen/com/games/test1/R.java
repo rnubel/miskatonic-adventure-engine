@@ -15,16 +15,21 @@ public final class R {
         public static final int captioncard=0x7f020001;
         public static final int compass=0x7f020002;
         public static final int creepeffect=0x7f020003;
-        public static final int icon=0x7f020004;
-        public static final int inv=0x7f020005;
-        public static final int journal=0x7f020006;
-        public static final int lab1=0x7f020007;
-        public static final int lab2=0x7f020008;
-        public static final int lcglowingeldersign=0x7f020009;
-        public static final int lctestimage=0x7f02000a;
-        public static final int radial_overlay=0x7f02000b;
-        public static final int side_highlight_right=0x7f02000c;
-        public static final int star=0x7f02000d;
+        public static final int creepeffect2=0x7f020004;
+        public static final int icon=0x7f020005;
+        public static final int inv=0x7f020006;
+        public static final int journal=0x7f020007;
+        public static final int lab1=0x7f020008;
+        public static final int lab2=0x7f020009;
+        public static final int lab_hallway=0x7f02000a;
+        public static final int lab_hallway_door=0x7f02000b;
+        public static final int lab_storage1=0x7f02000c;
+        public static final int lab_storage2=0x7f02000d;
+        public static final int lcglowingeldersign=0x7f02000e;
+        public static final int lctestimage=0x7f02000f;
+        public static final int radial_overlay=0x7f020010;
+        public static final int side_highlight_right=0x7f020011;
+        public static final int star=0x7f020012;
     }
     public static final class id {
         public static final int gameview=0x7f070000;
