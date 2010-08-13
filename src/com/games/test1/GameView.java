@@ -309,6 +309,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		public void showHalfCaption(Vector<String> captions) {
 			getMainGameState().showHalfCaption(captions);
 		}
+		
+		/** Prompt the player to take a given item. */
+		public void promptPlayerToTakeItem(String itemID) {
+			getMainGameState().showItemPrompt(itemID);
+		}
 
 		/** Show the journal screen. */
 		public void showJournal() {
@@ -649,6 +654,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			}
 
+			
 			public void start() {				
 				Log.w("Miskatonic", "STARTING MAIN GAME STATE ***");
 				if (mExecutor != null)
@@ -712,6 +718,43 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mHalfCaptionControl.addCaptions(captions);
 			}	
 
+			/** Show a prompt to take an item. This is added as a UI element
+			 *  to the bottom of the screen, essentially becoming part of the
+			 *  half-caption. */
+			public void showItemPrompt(final String itemID) {
+				// If we already have the item, do not bother. This
+				// does not allow stacking, but such a capacity could
+				// be added in later by removing this check and instead
+				// relying on an AAL call to something like getItemCount
+				// before showing the prompt.
+				if (mInventory.hasItem(itemID)) {
+					return;
+				}
+				
+				// Add a button that, when clicked, takes the item. 
+				UIControlButton control = new UIControlButton(
+					50,
+					(int)(getHeight() * .25),
+					"Take Item",
+					new UIEvent() {
+						@Override
+						public void execute(GameThread game) {
+							game.getExecutor().giveItemToPlayer(itemID);
+						}
+					}
+				);
+				
+				mUI.addControl(
+					control,						
+					GameUI.POSITION_BOTTOM);
+				
+				// Make it a child of our half-caption, if one exists.
+				if (mHalfCaptionControl != null) {
+					mHalfCaptionControl.addChild(control);
+				}
+			}
+
+			
 			/** Open the inventory panel. */
 			public void showInventory() {
 				mUI.removeControlsFromPosition(GameUI.POSITION_CENTER);
@@ -1440,6 +1483,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public StateType getType() { return StateType.Loading; }
 
 		}
+
 	} // GameThread
 
 	/**

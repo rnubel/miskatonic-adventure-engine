@@ -9,6 +9,8 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.util.Log;
+
 import com.games.test1.EventHandler;
 import com.games.test1.aal.AALInterpreter;
 import com.games.test1.aal.AALStatement;
@@ -110,7 +112,7 @@ public class ASTRAALParser {
 			
 			
 		} catch (Exception e) {
-			//Log.w("ASTRAAL", e.toString());			
+			Log.w("ASTRAAL", e.toString());			
 			return null;
 		}
 		
@@ -203,6 +205,11 @@ public class ASTRAALParser {
 			// Get navigation cues.			
 			parseNavigationInScene(scene, children);
 			
+			// Error-check:
+			if (scene.getObjects().size() == 0) {
+				Log.w("ASTRAAL", "No objects in scene " + id);
+			}
+			
 			astraalRt.addScene(scene);
 
 		}
@@ -260,9 +267,13 @@ public class ASTRAALParser {
 				String script = getNodeContents(eventNode);
 				
 				// Parse the script and attach it as an event.
-				AALStatement stmt = interpreter.interpret(script);
-				handler.attachEvent(EventHandler.getTypeFromEventName(eventName),
-									stmt);						
+				try {
+					AALStatement stmt = interpreter.interpret(script);
+					handler.attachEvent(EventHandler.getTypeFromEventName(eventName),
+									stmt);
+				} catch (Exception e) {
+					Log.w("ASTRAAL", "Error parsing AAL for object " + object.getID() +", event " + eventName + ": " + e.getMessage());
+				}
 				
 			}
 			

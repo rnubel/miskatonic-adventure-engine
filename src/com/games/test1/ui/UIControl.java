@@ -1,5 +1,7 @@
 package com.games.test1.ui;
 
+import java.util.Vector;
+
 import android.graphics.Canvas;
 
 import com.games.test1.DrawnObject;
@@ -13,9 +15,17 @@ public class UIControl {
 	protected int mWidth;
 	protected int mHeight;	
 	protected boolean mShouldRemove = false;
+	
+	/** Controls that get removed when we do. */
+	protected Vector<UIControl> mChildren = new Vector<UIControl>();
 
 	public void removeSelf() {
 		mShouldRemove = true;
+		
+		// Remove our children, too.
+		for (UIControl child : mChildren) {
+			child.removeSelf();
+		}
 	}
 	
 	public int getWidth() {
@@ -39,5 +49,13 @@ public class UIControl {
 
 	public void draw(Canvas c, int x, int y) {
 		c.drawRect(x, y, x + mWidth, y + mHeight, DrawnObject.basicPaint);		
+	}
+	
+	public void addChild(UIControl child) {
+		mChildren.add(child);
+	}
+	
+	public Vector<UIControl> getChildren() {
+		return mChildren;
 	}
 }

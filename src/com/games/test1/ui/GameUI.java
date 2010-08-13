@@ -126,7 +126,7 @@ public class GameUI {
 	}
 	
 	/** Draw the UI to the given canvas. */
-	public void draw(Canvas c) {		
+	public synchronized void draw(Canvas c) {		
 		doQueue();
 		try {
 			for (PositionedControl control : mControls) {
@@ -189,7 +189,7 @@ public class GameUI {
 			}		
 		}
 		
-		// Wait until draw() to remove.
+		doQueue();
 	}
 
 	/** Sum up the width of controls currently at a given position. */
@@ -213,11 +213,11 @@ public class GameUI {
 		}
 		return height;
 	}
-
+		
 	/** Process the removal queue. */
-	private void doQueue() {		
+	private synchronized void doQueue() {		
 		while (!mRemovalQueue.isEmpty()) {
-			mControls.removeElement(mRemovalQueue.get(0));
+			mControls.removeElement(mRemovalQueue.get(0));			
 			mRemovalQueue.remove(0);
 		}		
 		
@@ -226,6 +226,7 @@ public class GameUI {
 			mAdditionQueue.remove(0);
 		}
 	}
+
 	
 	/** FIXME: Refactor all of these. */
 	public void shiftControlRight(PositionedControl control, int dx) {

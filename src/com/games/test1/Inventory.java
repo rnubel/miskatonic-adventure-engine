@@ -36,6 +36,20 @@ public class Inventory {
 		return mItems;
 	}
 	
+	/** Returns true if we have the given item. */
+	public boolean hasItem(String itemID) {
+		// TODO: This is O(n) for items times O(m) for
+		// string comparisons -- replace with a hash
+		// map to get O(1) performance. Not critical.
+		for (InventoryItem i : mItems) {
+			if (i.getID().equals(itemID)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/** Save state to a bundle. 
 	 *  @param b - Bundle to save to. */
 	public void saveToBundle(Bundle b) {
@@ -68,4 +82,6 @@ public class Inventory {
 			executor.giveItemToPlayer(itemID);
 		}
 	}
+
+
  }

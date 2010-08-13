@@ -233,6 +233,13 @@ public class AALExecutionState {
 			mExecutor.giveItemToPlayer(itemID);
 		} else
 			
+		// promptTakeItem [item_id]: PROMPT PLAYER TO TAKE ITEM.
+		if (functionName.equals("promptTakeItem")) {
+			String itemID = (String) args[0].getValue();
+			
+			mExecutor.getGame().promptPlayerToTakeItem(itemID);
+		} else
+			
 		// unlockJournalPage [journal_id] [page_id]: ALLOW THE PLAYER TO READ THE GIVEN JOURNAL PAGE.
 		if (functionName.equals("unlockJournalPage")) {
 			String journalID = (String) args[0].getValue(),
@@ -252,6 +259,8 @@ public class AALExecutionState {
 			AALStatement b = new AALInterpreter().interpret(code);
 			mExecutor.saveCommandsToBuffer(b);
 		}
+			
+
 		
 		
 		
