@@ -231,18 +231,17 @@
 			</EVENT>
     </OBJECT>
 
-	<OBJECT id="lab_storage1_sulfur" x="460" y="156" w="50" h="40"
-		sprite="">
+	<OBJECT id="lab_storage1_sulfur" x="460" y="165" width="50" height="40"
+		sprite="">		
 		<EVENT event="onclick">
 			Call showCaption("This jar holds a yellow powder. Unscrewing the top, the " +
 				"pungent odor of brimstone wafted out, strong enough to give me cause " +
 				"to retighten the lid.");
 			Call promptTakeItem("chem_sulfur");
-      </EVENT>
+      </EVENT>       
 	</OBJECT>
 
-	<OBJECT id="lab_storage1_carbon" x="512" y="156" w="50" h="40"
-		sprite="">
+	<OBJECT id="lab_storage1_carbon" x="512" y="165" width="50" height="40" sprite="">
 		<EVENT event="onclick">
 			Call showCaption("This jar holds a coarse, black powder. I open the " +
 				"container to sniff it, and cough as the blackish soot nearly gets " +
@@ -251,26 +250,26 @@
       </EVENT>
 	</OBJECT>
 
-	<OBJECT id="lab_storage1_emptyjar" x="570" y="156" w="50" h="40" sprite="">
+	<OBJECT id="lab_storage1_emptyjar" x="570" y="165" width="50" height="40" sprite="">
 		<EVENT event="onclick">
 			Call showCaption("This jar is empty.");
       </EVENT>
 	</OBJECT>
 
-	<OBJECT id="lab_storage1_container" x="461" y="222" w="68" h="38" sprite="">
+	<OBJECT id="lab_storage1_container" x="461" y="222" width="68" height="38" sprite="">
 		<EVENT event="onclick">
 			Call showCaption("An empty glass container. The glass seems thick and well-made.");
 			Call promptTakeItem("chem_container");
 		</EVENT>
 	</OBJECT>
 
-	<OBJECT id="lab_storage1_testtubes" x="517" y="214" w="54" h="47" sprite="">
+	<OBJECT id="lab_storage1_testtubes" x="571" y="214" width="54" height="47" sprite="">
 		<EVENT event="onclick">
 			Call showCaption("A rack of worn test-tubes. I don’t think I’ll need these, as they’re more for experimentation than practical use.");
       </EVENT>
 	</OBJECT>
 		
-	<OBJECT id="lab_storage1_water" x="687" y="271" w="62" h="58" sprite="">
+	<OBJECT id="lab_storage1_water" x="687" y="271" width="62" height="58" sprite="">
 		<EVENT event="onclick">
 			Call showCaption("A large jug of water, with a handwritten note written on the glass surface. The note reads, 'DISTILLED'.");
 			Call promptTakeItem("chem_water");
