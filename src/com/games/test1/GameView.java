@@ -21,6 +21,7 @@ import com.games.test1.GameView.GameThread.MainMenuState;
 import com.games.test1.aal.AALExecutionState;
 import com.games.test1.astraal.*;
 import com.games.test1.ui.GameUI;
+import com.games.test1.ui.UIControl;
 import com.games.test1.ui.UIControlButton;
 import com.games.test1.ui.UIControlButtonImage;
 import com.games.test1.ui.UIControlButtonListItem;
@@ -686,13 +687,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI = new GameUI(GameView.this.getWidth(), GameView.this.getHeight(), GameThread.this);
 				
 				mUI.addControl(new UIControlButtonImage(48, 48, iconInventory, new UIEvent() {
-					public void execute(GameThread game) {
+					public void execute(GameThread game, UIControl caller) {
 						game.getMainGameState().showInventory();
 					}						
 				}), GameUI.POSITION_TOPLEFT);
 
 				mUI.addControl(new UIControlButtonImage(48, 48, iconJournal, new UIEvent() {
-					public void execute(GameThread game) {
+					public void execute(GameThread game, UIControl caller) {
 						game.showJournal();
 					}						
 				}), GameUI.POSITION_TOPLEFT);
@@ -732,14 +733,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				}
 				
 				// Add a button that, when clicked, takes the item. 
-				UIControlButton control = new UIControlButton(
+				final UIControlButton control = new UIControlButton(
 					50,
 					(int)(getHeight() * .25),
 					"Take Item",
 					new UIEvent() {
 						@Override
-						public void execute(GameThread game) {
+						public void execute(GameThread game, UIControl caller) {
 							game.getExecutor().giveItemToPlayer(itemID);
+							caller.removeSelf();
 						}
 					}
 				);
@@ -789,7 +791,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 				mScene.addObject(new NavigationCue(x, y, sceneID, dir));
 			}
-			
+
 			/**
 			 * Hover the given item over the screen until the user taps (not scrolls) again, at
 			 * which point trigger an onCombine event for the target item (if any).
@@ -1038,7 +1040,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI.addControl(
 						new UIControlButton(72, 32, "Go Back",
 							new UIEvent() {								
-								public void execute(GameThread game) {
+								public void execute(GameThread game, UIControl caller) {
 									game.setState(StateType.Main);
 								}
 						}),						
@@ -1046,7 +1048,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				
 				for (final ASTRAALJournal j : mExecutor.getJournalList()) {
 					mUI.addControl(new UIControlButtonListItem(80, 35, j.getTitle(), new UIEvent() {
-						public void execute(GameThread game) {
+						public void execute(GameThread game, UIControl caller) {
 							game.getJournalState().showJournal(j.getID());
 						}						
 					}), GameUI.POSITION_CENTER, true, DEFAULT_JOURNAL_UI_PADDING);
@@ -1065,7 +1067,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI.addControl(
 						new UIControlButton(72, 32, "Go Back",
 							new UIEvent() {								
-								public void execute(GameThread game) {
+								public void execute(GameThread game, UIControl caller) {
 									game.getJournalState().showJournalSelection();
 								}
 						}),						
@@ -1078,7 +1080,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					mUI.addControl(
 							new UIControlButtonListItem((int)(getWidth() * .6), 32, label,
 									new UIEvent() {								
-								public void execute(GameThread game) {
+								public void execute(GameThread game, UIControl caller) {
 									if (p.isUnlocked()) {
 										game.getJournalState().showJournalPage(jid, p.getID());
 									}
@@ -1096,7 +1098,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI.addControl(
 						new UIControlButton(72, 32, "Go Back",
 							new UIEvent() {								
-								public void execute(GameThread game) {
+								public void execute(GameThread game, UIControl caller) {
 									game.getJournalState().showJournal(jid);
 								}
 						}),						
@@ -1167,7 +1169,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
 				
 				mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Start New Game", new UIEvent() {
-					public void execute(GameThread t) {		
+					public void execute(GameThread t, UIControl caller) {		
 						t.setState(StateType.Loading);
 						t.loadAndStartMainGameState();						
 					}
@@ -1176,20 +1178,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				// Only show "Resume Game" and "Save Game" if there's a game to be resumed. 
 				if (!(mStateStack.empty())) {
 					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Resume Game", new UIEvent() {
-						public void execute(GameThread t) {		
+						public void execute(GameThread t, UIControl caller) {		
 							popState();
 						}
 					}),GameUI.POSITION_CENTER, true, 5);
 					
 					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Game", new UIEvent() {
-						public void execute(GameThread t) {		
+						public void execute(GameThread t, UIControl caller) {		
 							t.getMainMenuState().showSaveMenu();
 						}
 					}),GameUI.POSITION_CENTER, true, 5);
 				}
 		
 				mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Load Game", new UIEvent() {
-					public void execute(GameThread t) {		
+					public void execute(GameThread t, UIControl caller) {		
 						t.getMainMenuState().showLoadMenu();
 					}
 				}),GameUI.POSITION_CENTER, true, 5);				
@@ -1201,7 +1203,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i; // Fuckin' embarrassing lack of closures...
 					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Slot #" + i, new UIEvent() {
-						public void execute(GameThread t) {		
+						public void execute(GameThread t, UIControl caller) {		
 							t.saveToSlot(slot);
 							// For now, return immediately to the game. Maybe do
 							// something else later.
@@ -1211,7 +1213,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				}
 				
 				mUI.addControl(new UIControlButton((int) (MAIN_MENU_BUTTON_WIDTH * .75), MAIN_MENU_BUTTON_HEIGHT, "Cancel", new UIEvent() {
-					public void execute(GameThread t) {		
+					public void execute(GameThread t, UIControl caller) {		
 						t.getMainMenuState().showRootMenu();
 					}
 				}),GameUI.POSITION_CENTER, true, 5);					
@@ -1224,7 +1226,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i;
 					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Slot #" + i, new UIEvent() {
-						public void execute(GameThread t) {
+						public void execute(GameThread t, UIControl caller) {
 							t.setState(StateType.Loading);
 							t.loadAndStartMainGameState();
 							t.setState(StateType.Loading);
@@ -1234,7 +1236,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				}
 				
 				mUI.addControl(new UIControlButton((int) (MAIN_MENU_BUTTON_WIDTH * .75), MAIN_MENU_BUTTON_HEIGHT, "Cancel", new UIEvent() {
-					public void execute(GameThread t) {		
+					public void execute(GameThread t, UIControl caller) {		
 						t.getMainMenuState().showRootMenu();
 					}
 				}),GameUI.POSITION_CENTER, true, 5);		

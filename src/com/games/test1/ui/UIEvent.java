@@ -7,7 +7,7 @@ import com.games.test1.GameView.GameThread;
 
 /** A functor to be triggered as a UI event. */
 public class UIEvent {
-	public void execute(GameThread game) {
+	public void execute(GameThread game, UIControl caller) {
 		Log.w("Miskatonic", "DEFAULT EVENT TRIGGERED");
 	}
 }

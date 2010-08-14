@@ -30,7 +30,7 @@ public class UIControlButton extends UIControl {
 	
 	/** Trigger the event attached to this button. */
 	public void trigger(GameThread game, int mouseX, int mouseY) {
-		mEvent.execute(game);
+		mEvent.execute(game, this);
 	}
 
 	/** Draw this button. */

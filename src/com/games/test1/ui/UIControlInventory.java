@@ -22,6 +22,8 @@ public class UIControlInventory extends UIControl {
 	private Inventory mInventory;
 	private int mCols;
 	
+	private UIControlDialog mDetailsPanel;
+	
 	private static Paint scratchPaint = new Paint();
 
 	/** Create the inventory control with an attached inventory. */
@@ -42,10 +44,40 @@ public class UIControlInventory extends UIControl {
 			// Did not click on an item.						
 		} else {			
 			Log.w("Miskatonic", "CLICKED ON ITEM:" + mInventory.getItems().get(itemNum).getName());		
-			game.getMainGameState().selectInventoryItem(mInventory.getItems().get(itemNum));
+			
+			showDetailsForItem(mInventory.getItems().get(itemNum));
+			
 		}
 		removeSelf();
 	}
+	
+	/**
+	 * Show the description/context menu for an inventory item.
+	 */
+	public void showDetailsForItem(final InventoryItem i) {
+		mDetailsPanel = new UIControlDialog("Title", "Item description", 
+							"Use", 
+							new UIEvent() {
+								public void execute(GameThread game, UIControl caller) {
+									game.getMainGameState().selectInventoryItem(i);
+									caller.removeSelf();
+								}								
+							},
+							"Cancel",
+							new UIEvent() {
+								public void execute(GameThread game, UIControl caller) {
+									game.getMainGameState().selectInventoryItem(i);
+									caller.removeSelf();
+								}								
+							},
+							(int) (mWidth * .9),
+							(int) (mHeight * .9));
+		
+		// Establish a back-reference.
+		mDetailsPanel.mParent = this;
+	}
+	
+
 	
 	/** Draw the inventory panel. */
 	public void draw(Canvas c, int x, int y) {
@@ -70,5 +102,8 @@ public class UIControlInventory extends UIControl {
 			}
 		}
 		
+		if (mDetailsPanel != null) {
+			mDetailsPanel.draw(c, x + 5, y + 5);
+		}
 	}
 }

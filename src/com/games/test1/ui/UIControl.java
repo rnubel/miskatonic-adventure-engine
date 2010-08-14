@@ -18,6 +18,7 @@ public class UIControl {
 	
 	/** Controls that get removed when we do. */
 	protected Vector<UIControl> mChildren = new Vector<UIControl>();
+	protected UIControl mParent;
 
 	public void removeSelf() {
 		mShouldRemove = true;
@@ -53,9 +54,14 @@ public class UIControl {
 	
 	public void addChild(UIControl child) {
 		mChildren.add(child);
+		child.mParent = this; // Establish back-reference.
 	}
 	
 	public Vector<UIControl> getChildren() {
 		return mChildren;
+	}
+	
+	public UIControl getParent() {
+		return mParent;
 	}
 }
