@@ -29,7 +29,11 @@
 	</RESOURCES>
 	
 	<ITEMS>
-		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>			
+		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>
+		<ITEM id="chem_sulfur" sprite="spr_star" name="Yellow powder">A yellow powder, smelling of brimstone.</ITEM>
+		<ITEM id="chem_carbon" sprite="spr_star" name="Black powder">A black powder, smelling of soot and ash.</ITEM>
+		<ITEM id="chem_container" sprite="spr_star" name="Container">An empty glass container.</ITEM>
+		<ITEM id="chem_water" sprite="spr_star" name="Jug of Water">A jug of clear water.</ITEM>			
 	</ITEMS>
 	
 	<JOURNALS>
@@ -256,7 +260,7 @@
       </EVENT>
 	</OBJECT>
 
-	<OBJECT id="lab_storage1_container" x="461" y="222" width="68" height="38" sprite="">
+	<OBJECT id="lab_storage1_container" x="461" y="228" width="68" height="38" sprite="">
 		<EVENT event="onclick">
 			Call showCaption("An empty glass container. The glass seems thick and well-made.");
 			Call promptTakeItem("chem_container");
