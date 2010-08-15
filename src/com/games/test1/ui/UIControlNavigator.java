@@ -14,8 +14,9 @@ public class UIControlNavigator extends UIControl {
 	}
 	
 	/** Trigger the event attached to this button. */
-	public void trigger(GameThread game, int mouseX, int mouseY) {
+	public boolean trigger(GameThread game, int mouseX, int mouseY) {
 		game.getMainGameState().showInventory();
+		return true;
 	}
 
 	/** Draw this button. */

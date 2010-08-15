@@ -11,7 +11,7 @@ import com.games.test1.InventoryItem;
 import com.games.test1.GameView.GameThread;
 
 /** Draw the inventory panel to the screen. */
-public class UIControlInventory extends UIControl {
+public class UIControlInventory extends UIContainer {
 	public static final int DEFAULT_ITEM_WIDTH = 48;
 	public static final int DEFAULT_ITEM_HEIGHT = 48;
 	private static final int PADDING_LEFT = 6;
@@ -28,27 +28,33 @@ public class UIControlInventory extends UIControl {
 
 	/** Create the inventory control with an attached inventory. */
 	public UIControlInventory(Inventory inv, int width, int height) {
+		super(width, height);
 		mInventory = inv;
-		mWidth = width;
-		mHeight = height;
-		
+	
 		mCols = mWidth / DEFAULT_ITEM_WIDTH;
 	}
 	
 	/** Respond to a click. */
-	public void trigger(GameThread game, int mouseX, int mouseY) {
-		int col = (mouseX - PADDING_LEFT) / COL_WIDTH,
-			row = (mouseY - PADDING_TOP) / ROW_HEIGHT;
-		int itemNum = row * mCols + col;		
-		if (itemNum < 0 || itemNum >= mInventory.getItems().size()) {
-			// Did not click on an item.						
-		} else {			
-			Log.w("Miskatonic", "CLICKED ON ITEM:" + mInventory.getItems().get(itemNum).getName());		
-			
-			showDetailsForItem(mInventory.getItems().get(itemNum));
-			
+	public boolean trigger(GameThread game, int mouseX, int mouseY) {
+		if (!super.trigger(game, mouseX, mouseY)) {
+			int col = (mouseX - PADDING_LEFT) / COL_WIDTH,
+				row = (mouseY - PADDING_TOP) / ROW_HEIGHT;
+			int itemNum = row * mCols + col;		
+			if (itemNum < 0 || itemNum >= mInventory.getItems().size()) {
+				removeSelf();						
+			} else {			
+				Log.w("Miskatonic", "CLICKED ON ITEM:" + mInventory.getItems().get(itemNum).getName());		
+				
+				showDetailsForItem(mInventory.getItems().get(itemNum));
+			}
+		} else {
+			// Remove ourselves along with details panel.
+			if (mDetailsPanel.mShouldRemove) {
+				removeSelf();
+			}
 		}
-		removeSelf();
+		
+		return true;
 	}
 	
 	/**
@@ -74,7 +80,7 @@ public class UIControlInventory extends UIControl {
 							(int) (mHeight * .9));
 		
 		// Establish a back-reference.
-		mDetailsPanel.mParent = this;
+		mInnerUI.addControl(mDetailsPanel, GameUI.POSITION_CENTER);
 	}
 	
 
@@ -102,8 +108,6 @@ public class UIControlInventory extends UIControl {
 			}
 		}
 		
-		if (mDetailsPanel != null) {
-			mDetailsPanel.draw(c, x + 5, y + 5);
-		}
+		super.draw(c, x, y);
 	}
 }

@@ -43,9 +43,10 @@ public class UIControl {
 	 * Trigger a click event on this control. 
 	 * @param mouseX
 	 * @param mouseY
+	 * @return whether or not this click event should block further events.
 	 * */
-	public void trigger(GameThread game, int mouseX, int mouseY) {
-		
+	public boolean trigger(GameThread game, int mouseX, int mouseY) {
+		return false;
 	}
 
 	public void draw(Canvas c, int x, int y) {

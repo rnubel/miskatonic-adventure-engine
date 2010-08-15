@@ -3,23 +3,23 @@ package com.games.test1.ui;
 import java.util.Vector;
 
 import com.games.test1.Utility;
+import com.games.test1.GameView.GameThread;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-public class UIControlDialog extends UIControl {
+public class UIControlDialog extends UIContainer {
 	private static final float DEFAULT_TEXT_SIZE = 13.0f;
 	
 	private String mTitle;
 	private String mText;
 	private String mLeftLabel;
-	private String mRightLable;
+	private String mRightLabel;
 	private UIEvent mLeftEvent;
 	private UIEvent mRightEvent;
-	private int mWidth;
-	private int mHeight;
+
 
 	// Typesetting-related variables.
 	private Vector<String> mLines;
@@ -33,19 +33,31 @@ public class UIControlDialog extends UIControl {
 	public UIControlDialog(String title, String text, String leftButtonLabel,
 			UIEvent leftEvent, String rightButtonLabel, UIEvent rightEvent,
 			int width, int height) {
-		
+		super(width, height);
 		mTitle = title;
 		mText = text;
 		mLeftLabel = leftButtonLabel;
-		mRightLable = rightButtonLabel;
+		mRightLabel = rightButtonLabel;
 		mLeftEvent = leftEvent;
 		mRightEvent = rightEvent;
-		mWidth = width;
-		mHeight = height;
-						
+					
+		mInnerUI.addControl(
+				new UIControlButton(100,40,mLeftLabel, mLeftEvent), GameUI.POSITION_BOTTOMLEFT);
+		mInnerUI.addControl(
+				new UIControlButton(100,40,mRightLabel, mRightEvent), GameUI.POSITION_BOTTOMRIGHT);
+		
 		setupText();
 	}
 
+	@Override
+	public boolean trigger(GameThread t, int x, int y) {
+		if (mInnerUI.onClick(x, y)) {
+			removeSelf();
+			return true;
+		}
+		return false;
+	}
+	
 	private void setupText() {
 		setupFont();
 		
@@ -71,10 +83,19 @@ public class UIControlDialog extends UIControl {
 
 	/** Draw the dialog box. */
 	public void draw(Canvas c, int x, int y) {
+		// Shadow
+		GameUI.scratchPaint.setColor(Color.DKGRAY);
+		c.drawRect(x + 1, y + 1, x + mWidth + 1, y + mHeight + 1, GameUI.scratchPaint);
+		
 		GameUI.scratchPaint.setStyle(Paint.Style.FILL);
 		GameUI.scratchPaint.setColor(Color.GRAY);
 		
 		c.drawRect(x, y, x + mWidth, y + mHeight, GameUI.scratchPaint);
+	
+		GameUI.scratchPaint.setStyle(Paint.Style.STROKE);
+		GameUI.scratchPaint.setColor(Color.WHITE);
+		c.drawRect(x, y, x + mWidth, y + mHeight, GameUI.scratchPaint);
+		
 		c.drawText(mTitle, x, y + 4, dialogPaint);
 		for (int i = 0; i < mLines.size(); i++) {					
 			c.drawText(mLines.get(i), 
@@ -83,6 +104,6 @@ public class UIControlDialog extends UIControl {
 					dialogPaint);					
 		}				
 		
-		GameUI.scratchPaint.setStyle(Paint.Style.STROKE);
+		super.draw(c, x, y);
 	}
 }

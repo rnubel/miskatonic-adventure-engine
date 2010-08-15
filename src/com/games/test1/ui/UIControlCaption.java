@@ -39,7 +39,7 @@ public class UIControlCaption extends UIControl {
 	}
 	
 	/** Trigger the event attached to this button. */
-	public void trigger(GameThread game, int mouseX, int mouseY) {		
+	public boolean trigger(GameThread game, int mouseX, int mouseY) {		
 		mCaptions.remove(0);
 		if (mCaptions.isEmpty()) {
 			removeSelf();
@@ -47,6 +47,7 @@ public class UIControlCaption extends UIControl {
 		} else {
 			updateCaption();					
 		}		
+		return true;
 	}
 	
 	/** Set up the caption font if needed. */
