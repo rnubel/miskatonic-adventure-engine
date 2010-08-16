@@ -71,8 +71,7 @@ public class UIControlInventory extends UIContainer {
 							},
 							"Cancel",
 							new UIEvent() {
-								public void execute(GameThread game, UIControl caller) {
-									game.getMainGameState().selectInventoryItem(i);
+								public void execute(GameThread game, UIControl caller) {									
 									caller.removeSelf();
 								}								
 							},

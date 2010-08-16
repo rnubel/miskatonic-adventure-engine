@@ -19,6 +19,12 @@ public class UIControl {
 	/** Controls that get removed when we do. */
 	protected Vector<UIControl> mChildren = new Vector<UIControl>();
 	protected UIControl mParent;
+	
+	/** Our containing UI. */
+	public GameUI mUI;
+	
+	/** Hook executed after being attached to a GameUI. */
+	public void doAfterAttach() { }
 
 	public void removeSelf() {
 		mShouldRemove = true;
@@ -38,12 +44,17 @@ public class UIControl {
 		// TODO Auto-generated method stub
 		return mHeight;
 	}
+	
+	public GameThread getGameThread() {
+		return mUI.getGameThread();
+	}
 
 	/** 
 	 * Trigger a click event on this control. 
+	 * TODO: Remove game as a parameters. Use getGameThread() instead.
 	 * @param mouseX
 	 * @param mouseY
-	 * @return whether or not this click event should block further events.
+	 * @return whether or not this click event should block further events. 
 	 * */
 	public boolean trigger(GameThread game, int mouseX, int mouseY) {
 		return false;

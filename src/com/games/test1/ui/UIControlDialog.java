@@ -40,13 +40,20 @@ public class UIControlDialog extends UIContainer {
 		mRightLabel = rightButtonLabel;
 		mLeftEvent = leftEvent;
 		mRightEvent = rightEvent;
-					
+			
+		
+		
+		setupText();
+	}
+	
+	@Override
+	public void doAfterAttach() {
+		super.doAfterAttach();
+		
 		mInnerUI.addControl(
 				new UIControlButton(100,40,mLeftLabel, mLeftEvent), GameUI.POSITION_BOTTOMLEFT);
 		mInnerUI.addControl(
 				new UIControlButton(100,40,mRightLabel, mRightEvent), GameUI.POSITION_BOTTOMRIGHT);
-		
-		setupText();
 	}
 
 	@Override

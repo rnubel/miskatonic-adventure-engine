@@ -38,6 +38,9 @@ public class GameUI {
 			mX = x;
 			mY = y;			
 			mPosition = pos;
+			control.mUI = GameUI.this;
+			
+			control.doAfterAttach();
 		}
 		
 		public void draw(Canvas c) {
@@ -344,5 +347,9 @@ public class GameUI {
 		default :
 			return 0;
 		}
+	}
+
+	public GameThread getGameThread() {
+		return mGame;
 	}
 }

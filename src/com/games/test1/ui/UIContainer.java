@@ -14,8 +14,12 @@ public class UIContainer extends UIControl {
 	
 	public UIContainer(int w, int h) {
 		mWidth = w;
-		mHeight = h;
-		mInnerUI = new GameUI(w, h, null);
+		mHeight = h;		
+	}
+	
+	/** Hook executed after being attached to a GameUI. */
+	public void doAfterAttach() {
+		mInnerUI = new GameUI(mWidth, mHeight, getGameThread());
 	}
 	
 	public void draw(Canvas c, int x, int y) {
