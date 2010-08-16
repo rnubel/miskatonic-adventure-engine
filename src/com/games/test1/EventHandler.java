@@ -11,13 +11,16 @@ import com.games.test1.aal.AALStatement;
  * An EventHandler is attached to both an ASTRAALObject (the "template" object) and 
  * a DrawnObject (the "actual" object), and it holds the functionality for
  * responding to whatever events the object was declared to respond to. It requires
- * an ExecutionState to work off of.
+ * an ExecutionState to work off of, passed in to the responseTo method, since it
+ * executes AAL code.
  */
 public class EventHandler {
 	public enum Type {
 		OnClick,
 		OnLoad, 
-		OnCombine
+		OnCombine,
+    OnEnter,
+    OnTimeout
 	}
 	
 	public static Type getTypeFromEventName(String event) {
@@ -27,7 +30,12 @@ public class EventHandler {
 			return Type.OnLoad;
 		} else if (event.equals("oncombine")) {
 			return Type.OnCombine;
-		}
+		} else if (event.equals("onenter")) {
+      return Type.OnEnter;
+    } else if (event.equals("ontimeout")) {
+      return Type.OnTimeout;
+    }
+
 		return null;
 	}
 	
@@ -41,7 +49,7 @@ public class EventHandler {
 		try {
 			eventMap.get(type).execute(state);
 		} catch(NullPointerException e) {
-
+      Log.w("EventHandler", "Exception thrown when handling event " + type.toString() + ": " + e.getMessage());
 		}		
 	}
 }

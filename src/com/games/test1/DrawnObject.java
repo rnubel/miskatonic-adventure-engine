@@ -122,6 +122,12 @@ public abstract class DrawnObject {
 		}
 	}
 
+	public void doOnEnter(AALExecutionState state) {
+ 	  if (hasEventHandler()) {
+			mEventHandler.respondTo(EventHandler.Type.OnEnter, state);
+		}
+  }
+
 	/**
 	 * Update method. This is called by the Scene when it updates all objects it possesses.
 	 * @return whether or not to remove this object.

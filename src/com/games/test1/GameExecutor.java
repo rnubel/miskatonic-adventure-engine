@@ -267,6 +267,9 @@ public class GameExecutor {
 			doOnLoadForSceneObjects();
 		}
 
+    // Call onEnter events for all scene objects.
+    doOnEnterForSceneObjects();
+
 		// Remove the loading screen if it's still up.
 		if (mGame.getCurrentStateType() == StateType.Loading) {
 			mGame.setState(StateType.Main);
@@ -281,7 +284,15 @@ public class GameExecutor {
 		}
 	}
 
-	/**
+  /** Call the onEnter event for all objects in the current scene. */
+	private void doOnEnterForSceneObjects() {		
+		for (DrawnObject obj : mGame.getCurrentScene().getAllObjects()) {
+			// Call the object's onenter event.
+			obj.doOnEnter(mExecutionState);
+		}
+	}
+	
+  /**
 	 * Attach all known foreground objects for the current scene to the game.
 	 * FIXME: Refactor the separate components of this method out.
 	 */

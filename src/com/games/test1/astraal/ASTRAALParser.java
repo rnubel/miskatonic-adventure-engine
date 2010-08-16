@@ -262,6 +262,7 @@ public class ASTRAALParser {
 				Node eventNode = eventNodes.item(k);
 				if (eventNode.getNodeType() != Node.ELEMENT_NODE)
 					continue;
+        // FIXME: Add check to ensure this is an EVENT tag.
 				
 				String eventName = getAttributeValue(eventNode, "event", "");
 				String script = getNodeContents(eventNode);

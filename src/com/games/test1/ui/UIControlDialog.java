@@ -12,6 +12,7 @@ import android.graphics.Rect;
 
 public class UIControlDialog extends UIContainer {
 	private static final float DEFAULT_TEXT_SIZE = 13.0f;
+	private static final float TITLE_TEXT_SIZE = 20.0f;
 	
 	private String mTitle;
 	private String mText;
@@ -26,7 +27,7 @@ public class UIControlDialog extends UIContainer {
 	private int mTextHeight;
 	private int mYStart;
 	
-	private static Paint dialogPaint;
+	private static Paint dialogPaint, dialogTitlePaint;
 
 	/** Creates a new dialog box. When either button is pressed, the respective
 	 *  event is called. */
@@ -81,6 +82,9 @@ public class UIControlDialog extends UIContainer {
 			dialogPaint.setTextAlign(Paint.Align.CENTER);
 			dialogPaint.setAntiAlias(true);
 			dialogPaint.setColor(Color.WHITE);			
+
+      dialogTitlePaint = new Paint(dialogPaint)
+      dialogTitlePaint.setTextSize(TITLE_TEXT_SIZE);
 		}
 		
 		Rect bounds = new Rect();
@@ -103,7 +107,7 @@ public class UIControlDialog extends UIContainer {
 		GameUI.scratchPaint.setColor(Color.WHITE);
 		c.drawRect(x, y, x + mWidth, y + mHeight, GameUI.scratchPaint);
 		
-		c.drawText(mTitle, x, y + 4, dialogPaint);
+		c.drawText(mTitle, x + mWidth / 2, y + 20, dialogPaint);
 		for (int i = 0; i < mLines.size(); i++) {					
 			c.drawText(mLines.get(i), 
 					x + mWidth/2, 
