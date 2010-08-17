@@ -14,12 +14,9 @@ import com.games.test1.Resource;
 import java.lang.reflect.Field;
 
 /**
- * 	<ANIMATION id="spr1" fps="4" width="40" height="40">
- *		<FRAME>lctestimage.png</FRAME>
- *		<FRAME>lcglowingeldersign.png</FRAME>
- *	</ANIMATION>
+ * An animation resource template, which when loaded via loadResource
+ * creates an Animation object. This can be obtained via getResource.
  */
-
 public class ASTRAALResAnimation extends ASTRAALResource {
 	private int mFPS;	
 	private int mWidth;

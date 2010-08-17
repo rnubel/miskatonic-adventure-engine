@@ -1,6 +1,7 @@
 package com.games.test1;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -50,6 +51,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -92,6 +94,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	 * Thread for the actual game logic and rendering.
 	 */
 	public class GameThread extends Thread {
+		private static final String SAVEGAME_FILENAME_BASE = "savegame_";
+
 		private static final int CAMERA_DEFAULT_WIDTH = 800;
 
 		private static final int CAMERA_DEFAULT_HEIGHT = 480;
@@ -501,7 +505,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		public boolean saveToFile(String filename) {
 			try {
 				FileOutputStream out = 
-						context.openFileOutput(filename, Context.MODE_WORLD_WRITEABLE);
+						context.openFileOutput(filename, Context.MODE_WORLD_WRITEABLE);				
 				mExecutor.save(out);
 				out.close();
 												
@@ -530,12 +534,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Save the game to a given save slot. */
 		public boolean saveToSlot(int slotNum) {
-			return saveToFile("savegame_" + slotNum);			
+			return saveToFile(SAVEGAME_FILENAME_BASE + slotNum);			
 		}
 		
 		/** Load the game from a given save slot. */
 		public boolean loadFromSlot(int slotNum) {
-			return loadFromFile("savegame_" + slotNum);			
+			return loadFromFile(SAVEGAME_FILENAME_BASE + slotNum);			
 		}
 
 
@@ -1148,7 +1152,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		/** Main menu for the game. */
 		public class MainMenuState extends BasicGameState {
 			private static final int MAIN_MENU_BUTTON_HEIGHT = 40;
-			private static final int MAIN_MENU_BUTTON_WIDTH = 140;
+			private static final int MAIN_MENU_BUTTON_WIDTH = 240;
 			private GameUI mUI;
 			
 			public MainMenuState() {
@@ -1225,13 +1229,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i;
-					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Slot #" + i, new UIEvent() {
-						public void execute(GameThread t, UIControl caller) {
-							t.setState(StateType.Loading);
-							t.loadAndStartMainGameState();
-							t.setState(StateType.Loading);
-							t.loadFromSlot(slot);
-						}
+					final long timestamp;
+					Time time;
+					// See if this file exists.											
+					File saveslot = new File(context.getFilesDir(), SAVEGAME_FILENAME_BASE + i);
+					timestamp = saveslot.lastModified();						
+										
+					if (timestamp == 0) {
+						// This save slot does not exist.
+						continue;
+					} else {
+						time = new Time();
+						time.set(timestamp);
+					}
+					
+					
+					mUI.addControl(
+						new UIControlButton(
+							MAIN_MENU_BUTTON_WIDTH, 
+							MAIN_MENU_BUTTON_HEIGHT, 
+							"Save Slot #" + i + " (" + time.format("%m/%d %H:%M") + ")", 
+							new UIEvent() {
+							public void execute(GameThread t, UIControl caller) {
+								t.setState(StateType.Loading);
+								t.loadAndStartMainGameState();
+								t.setState(StateType.Loading);
+								t.loadFromSlot(slot);
+							}
 					}),GameUI.POSITION_CENTER, true, 5);
 				}
 				
