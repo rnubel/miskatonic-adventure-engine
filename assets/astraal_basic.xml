@@ -3,7 +3,7 @@
 		<ANIMATION id="caption_card_bg" fps="1" width="800" height="600" framecount="1">
 			captioncard
 		</ANIMATION>
-		<ANIMATION id="spr_star" fps="4" width="32" height="32" framecount="1">		
+		<ANIMATION id="spr_star" fps="4" width="32" height="32" framecount="1">
 			star
 		</ANIMATION>
 		<ANIMATION id="bg_lab1" fps="0" width="800" height="480" framecount="1">
@@ -25,37 +25,32 @@
 			lab_hallway_door
 		</ANIMATION>
 	</RESOURCES>
-	<RESOURCES id="set_two">	
+	<RESOURCES id="set_two" preload="false">
 	</RESOURCES>
-	
 	<ITEMS>
 		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>
 		<ITEM id="chem_sulfur" sprite="spr_star" name="Yellow powder">A yellow powder, smelling of brimstone.</ITEM>
 		<ITEM id="chem_carbon" sprite="spr_star" name="Black powder">A black powder, smelling of soot and ash.</ITEM>
 		<ITEM id="chem_container" sprite="spr_star" name="Container">An empty glass container.</ITEM>
-		<ITEM id="chem_water" sprite="spr_star" name="Jug of Water">A jug of clear water.</ITEM>			
+		<ITEM id="chem_water" sprite="spr_star" name="Jug of Water">A jug of clear water.</ITEM>
 	</ITEMS>
-	
 	<JOURNALS>
 		<JOURNAL id="notes" title="Scientists' Notes">
-			<PAGE id="one" title="On burning sulfur">
+			<PAGE id="lab_on_sulfur" title="On burning sulfur">
 				Like a typical combustion reaction, sulfur plus oxygen forms sulfur dioxide and vaporized water.
-			</PAGE> 
-			<PAGE id="two" title="On oxidation">
+			</PAGE>
+			<PAGE id="lab_on_oxidation" title="On oxidation">
 				Interesting note: in the presence of vanadium oxide and a surplus of oxygen, sulfur dioxide oxidizes quickly to sulfur trioxide.
-			</PAGE> 
-			<PAGE id="three" title="On condensation">
+			</PAGE>
+			<PAGE id="lab_on_condensation" title="On condensation">
 				Hydration of sulfur trioxide works as expected. I will need a mechanism to condense the resulting gas, however, into the much-more-usable liquid acid.
 			</PAGE>
 		</JOURNAL>
 	</JOURNALS>
-	
 	<SCENE id="scene_lab1" resourceblock="first_area" background="bg_lab1" width="800" height="480">
 		<NAVIGATION position="right" to_scene="scene_lab2"/>
-		<!--  <NAVIGATION position="left" to_scene="scene_lab_hallway"/> -->			
-	
 		<OBJECT id="lab_null" x="0" y="0" width="0" height="0" sprite="">
-			<EVENT event="onload">				
+			<EVENT event="onload">
 				Call showCaptionCard("I awoke, as if from a deep slumber, but with little of the ease of waking that one would expect after such a sleep. Breath entered my body, drawn in reflexively, forcing its way into my stiffened chest.", "I coughed, the spasm racking my frame but bringing feeling to my limbs, which felt in some way different -- perhaps it had been long indeed since I fell asleep.", "Opening my eyes, the dim lighting of my surroundings caused me no discomfort. However, the haze of my sudden animation obscured the nature of the sight, and only gradually did my vision truly come into focus.");			
 				Call fadeIn(2);
 				Call unlockJournalPage("personal", "one");
@@ -65,12 +60,12 @@
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_jar" x="151" y="96" width="72" height="72" sprite="">
-			<EVENT event="onclick">				
+			<EVENT event="onclick">
 				Call showCaption("A specimen jar, now broken at the top, likely containing some kind of preservative.");
 				If [lab_hadMemoryCaption == False] Then
 					Let lab_hadMemoryCaption = True;
 					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
-				End								
+				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_vials" x="158" y="207" width="61" height="45" sprite="">
@@ -79,12 +74,12 @@
 				If [lab_hadMemoryCaption == False] Then
 					Let lab_hadMemoryCaption = True;
 					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
-				End		
+				End
 			</EVENT>
 			<EVENT event="oncombine">
 				
 			</EVENT>
-		</OBJECT>		
+		</OBJECT>
 		<OBJECT id="lab_skull" x="232" y="189" width="47" height="53" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("A human skull. Most likely, a real one.");
@@ -120,8 +115,8 @@
 					Let lab_hadMemoryCaption = True;
 					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
 				End
-			</EVENT> 
-		</OBJECT>	
+			</EVENT>
+		</OBJECT>
 		<OBJECT id="lab_generator" x="514" y="96" width="176" height="191" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("I recognize this machine: it's a generator. But the electricity seems to be running without the aid of the generator -- ", "Perhaps someone needed additional power, or a backup for something of grave importance.", "The large blood stain on the front mars the otherwise-pristine machinery...");
@@ -139,7 +134,7 @@
 					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
 				End
 			</EVENT>
-		</OBJECT>	
+		</OBJECT>
 		<OBJECT id="lab_cables" x="43" y="335" width="129" height="40" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("The thick electrical cords are heavily frayed at the ends, as if they had been blown apart violently.");
@@ -148,7 +143,7 @@
 					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
 				End
 			</EVENT>
-		</OBJECT>	
+		</OBJECT>
 		<OBJECT id="lab_leftdoor" x="14" y="106" width="57" height="208" sprite="">
 			<EVENT event="onclick">
 				If [lab_enteredLab2 == False] Then
@@ -157,68 +152,57 @@
 					Call changeScene("scene_lab_hallway");
 				End
 			</EVENT>
-		</OBJECT>			
+		</OBJECT>
 	</SCENE>
 	<SCENE id="scene_lab2" resourceblock="first_area" background="bg_lab2" width="800" height="446">
-		<NAVIGATION position="left" to_scene="scene_lab1"/>		
-
+		<NAVIGATION position="left" to_scene="scene_lab1"/>
 		<OBJECT id="lab2_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
 				Let lab_enteredLab2 = True;
 				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
 								 "The macabre scene before me assaulted all my senses, yet no effort of mine could force my gaze away. My mind began to reel, and my tenuous grip upon my consciousness began to slip; having just woken from a black oblivion, I found myself in danger of slipping into it once again.",
 								 "Frantically, I struggled to regain control of my sanity...");
-				Call doOnReturnToMainGame("Call enterSanityMiniGame();");								 
+				Call doOnReturnToMainGame("Call enterSanityMiniGame();");
 			</EVENT>
-		</OBJECT>			
-		
+		</OBJECT>
 		<OBJECT id="lab2_body" x="156" y="73" width="546" height="144" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("The still-decomposing corpse of some poor soul lies on the table, limbs splayed and twisted in terrible agony. From what little of my ragged memory pertains to physiological knowledge,", " would estimate that he had lain dead for no more than a couple months. I can’t help but speculate at the cause of his death... was I involved? If not, why am I here?");
 			</EVENT>
 		</OBJECT>
-		
 		<OBJECT id="lab2_restraint1" x="282" y="213" width="46" height="57" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
 			</EVENT>
 		</OBJECT>
-		
 		<OBJECT id="lab2_restraint2" x="475" y="220" width="46" height="57" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
 			</EVENT>
 		</OBJECT>
-		
 		<OBJECT id="lab2_restraint3" x="611" y="221" width="46" height="57" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("Leather restraints of considerable thickness, now broken and charred, are still attached to the table.", "His death must have been excruciating, to have broken through the restraints so violently.");
 			</EVENT>
 		</OBJECT>
-		
 		<OBJECT id="lab2_sigil" x="225" y="334" width="296" height="57" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("There’s some kind of sigil painted on the floor beneath the table... a circle, with a few lines crossing it.", "It’s certainly no schematic; rather, it looks like an occult symbol. But if this was for some occult ritual, what is the machinery for?");
 			</EVENT>
 		</OBJECT>
-				
-		<!-- TODO: Add cords. -->
 	</SCENE>
 	<SCENE id="scene_lab_hallway" resourceblock="first_area" background="bg_lab_hallway" width="800" height="480">
 		<NAVIGATION position="bottom" to_scene="scene_lab1"/>
-		
-		<OBJECT id="lab_hallway_null" sprite="">
+		<OBJECT id="lab_hallway_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
 				Call showCaptionCard("Hoping to escape the macabre scene behind me, I opened the door of the lab to exit. Beyond me lay a hallway, masonry of the same manner as the lab.", "Thankfully, the hallway presented no grisly sights: simply a barred door straight ahead, and some room to the left."
 			</EVENT>
 		</OBJECT>
-		
 		<OBJECT id="lab_hallway_leftdoor" x="220" y="120" width="36" height="215" sprite="">
 			<EVENT event="onclick">
 				Call changeScene("scene_lab_storage1");
 			</EVENT>
 		</OBJECT>
-		
 		<OBJECT id="lab_hallway_leftdoor" x="326" y="140" width="97" height="129" sprite="">
 			<EVENT event="onclick">
 				Call changeScene("scene_lab_hallway_door");
@@ -226,77 +210,81 @@
 		</OBJECT>
 	</SCENE>
 	<SCENE id="scene_lab_storage1" resourceblock="first_area" background="bg_lab_storage1" width="800" height="480">
-		<NAVIGATION position="left" to_scene="scene_lab_storage2" />
-		<NAVIGATION position="bottom" to_scene="scene_lab_hallway" />
-		
-		<OBJECT id="lab_storage1_null" sprite="">
+		<NAVIGATION position="left" to_scene="scene_lab_storage2"/>
+		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
+		<OBJECT id="lab_storage1_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
 				Call showCaptionCard("The room which I entered was some sort of storage room for a scientist, or, considering the variety of components, perhaps an alchemist.");
 			</EVENT>
-    </OBJECT>
-
-	<OBJECT id="lab_storage1_sulfur" x="460" y="165" width="50" height="40"
-		sprite="">		
-		<EVENT event="onclick">
-			Call showCaption("This jar holds a yellow powder. Unscrewing the top, the " +
+		</OBJECT>
+		<OBJECT id="lab_storage1_sulfur" x="460" y="165" width="50" height="40" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("This jar holds a yellow powder. Unscrewing the top, the " +
 				"pungent odor of brimstone wafted out, strong enough to give me cause " +
 				"to retighten the lid.");
 			Call promptTakeItem("chem_sulfur");
-      </EVENT>       
-	</OBJECT>
-
-	<OBJECT id="lab_storage1_carbon" x="512" y="165" width="50" height="40" sprite="">
-		<EVENT event="onclick">
-			Call showCaption("This jar holds a coarse, black powder. I open the " +
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_carbon" x="512" y="165" width="50" height="40" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("This jar holds a coarse, black powder. I open the " +
 				"container to sniff it, and cough as the blackish soot nearly gets " +
 				"into my lungs.");
 			Call promptTakeItem("chem_carbon");
-      </EVENT>
-	</OBJECT>
-
-	<OBJECT id="lab_storage1_emptyjar" x="570" y="165" width="50" height="40" sprite="">
-		<EVENT event="onclick">
-			Call showCaption("This jar is empty.");
-      </EVENT>
-	</OBJECT>
-
-	<OBJECT id="lab_storage1_container" x="461" y="228" width="68" height="38" sprite="">
-		<EVENT event="onclick">
-			Call showCaption("An empty glass container. The glass seems thick and well-made.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_emptyjar" x="570" y="165" width="50" height="40" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("This jar is empty.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_container" x="461" y="222" width="68" height="38" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("An empty glass container. The glass seems thick and well-made.");
 			Call promptTakeItem("chem_container");
-		</EVENT>
-	</OBJECT>
-
-	<OBJECT id="lab_storage1_testtubes" x="571" y="214" width="54" height="47" sprite="">
-		<EVENT event="onclick">
-			Call showCaption("A rack of worn test-tubes. I don’t think I’ll need these, as they’re more for experimentation than practical use.");
-      </EVENT>
-	</OBJECT>
-		
-	<OBJECT id="lab_storage1_water" x="687" y="271" width="62" height="58" sprite="">
-		<EVENT event="onclick">
-			Call showCaption("A large jug of water, with a handwritten note written on the glass surface. The note reads, 'DISTILLED'.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_testtubes" x="571" y="214" width="54" height="47" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("A rack of worn test-tubes. I don’t think I’ll need these, as they’re more for experimentation than practical use.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_water" x="687" y="271" width="62" height="58" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("A large jug of water, with a handwritten note written on the glass surface. The note reads, 'DISTILLED'.");
 			Call promptTakeItem("chem_water");
-		</EVENT>
-	</OBJECT>
-	
-  </SCENE>
-
-
-	<SCENE id="scene_lab_storage2" resourceblock="first_area"
-		background="bg_lab_storage2" width="800" height="480">
-		<NAVIGATION position="right" to_scene="scene_lab_storage1" />
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_miscjars" x="462" y="276" width="90" height="54" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("A collection of empty, dusty jars. They probably haven't been used in a few years, at least.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_books" x="710" y="207" width="45" height="51" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("Books, all of which are on esoteric subjects ranging from the occult to the mundane.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_box" x="674" y="167" width="72" height="33" sprite="">
+			<EVENT event="onclick">
+				Call showCaption("A box of miscellaneous metal and glass parts. Unless I need one specifically, there's no use taking any of these.");
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage1_note" x="630" y="306" width="45" height="24" sprite="">
+			<EVENT event="onclick">
+				unlockJournalPage("notes", "lab_on_sulfur");
+			</EVENT>
+		</OBJECT>
 	</SCENE>
-
-
+	<SCENE id="scene_lab_storage2" resourceblock="first_area" background="bg_lab_storage2" width="800" height="480">
+		<NAVIGATION position="right" to_scene="scene_lab_storage1"/>
+	</SCENE>
 	<SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_hallway_door" width="800" height="480">
 		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
-		
-		<OBJECT id="lab_hallway_door_null" sprite="">
+		<OBJECT id="lab_hallway_door_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
 				Call showCaptionCard("Unfortunately, while the door was indeed barred from my side, the bar was locked solidly in place by a triple-bolt lock on the left-hand side.");
 			</EVENT>
 		</OBJECT>
-  </SCENE>
-
+	</SCENE>
 </ASTRAAL>

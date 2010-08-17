@@ -61,7 +61,7 @@ public class UIControlInventory extends UIContainer {
 	 * Show the description/context menu for an inventory item.
 	 */
 	public void showDetailsForItem(final InventoryItem i) {
-		mDetailsPanel = new UIControlDialog("Title", "Item description", 
+		mDetailsPanel = new UIControlDialog(i.getName(), i.getDescription(), 
 							"Use", 
 							new UIEvent() {
 								public void execute(GameThread game, UIControl caller) {

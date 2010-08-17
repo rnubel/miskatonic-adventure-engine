@@ -83,10 +83,10 @@ public class UIControlDialog extends UIContainer {
 			dialogPaint.setAntiAlias(true);
 			dialogPaint.setColor(Color.WHITE);			
 
-      dialogTitlePaint = new Paint(dialogPaint)
-      dialogTitlePaint.setTextSize(TITLE_TEXT_SIZE);
+			dialogTitlePaint = new Paint(dialogPaint);
+			dialogTitlePaint.setTextSize(TITLE_TEXT_SIZE);
 		}
-		
+
 		Rect bounds = new Rect();
 		dialogPaint.getTextBounds("AAA", 0, 1, bounds);
 		mTextHeight = (int) (Math.abs(bounds.top - bounds.bottom) * 1.5);
@@ -107,7 +107,7 @@ public class UIControlDialog extends UIContainer {
 		GameUI.scratchPaint.setColor(Color.WHITE);
 		c.drawRect(x, y, x + mWidth, y + mHeight, GameUI.scratchPaint);
 		
-		c.drawText(mTitle, x + mWidth / 2, y + 20, dialogPaint);
+		c.drawText(mTitle, x + mWidth / 2, y + 20, dialogTitlePaint);
 		for (int i = 0; i < mLines.size(); i++) {					
 			c.drawText(mLines.get(i), 
 					x + mWidth/2, 
