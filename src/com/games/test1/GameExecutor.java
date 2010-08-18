@@ -392,4 +392,9 @@ public class GameExecutor {
 			mStatementBuffer = null; 
 		}
 	}
+
+	/** Play the given sound. */
+	public void playSound(String id) {
+		mGame.playSound(id);
+	}
 }

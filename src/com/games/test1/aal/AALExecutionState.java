@@ -258,7 +258,13 @@ public class AALExecutionState {
 			String code = (String) args[0].getValue();
 			AALStatement b = new AALInterpreter().interpret(code);
 			mExecutor.saveCommandsToBuffer(b);
-		}
+		} else
+		
+		// playSound [sound_id]: PLAYS THE GIVEN SOUND ONCE.
+		if (functionName.equals("playSound")) {
+			String id = (String) args[0].getValue();			
+			mExecutor.playSound(id);
+		} 
 			
 
 		
@@ -268,7 +274,7 @@ public class AALExecutionState {
 		
 			
 		
-		/** Got nothin'. Return null. */
+		/** Got nothin'. Return null object. */
 		return new AALValue();
 	}	
 }

@@ -308,8 +308,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			getCaptionCardState().setCaptions(captions);
 			startCaptionState();									
 		}
-
-
+		
 		/** Add a caption UI element to the screen. */
 		public void showHalfCaption(Vector<String> captions) {
 			getMainGameState().showHalfCaption(captions);
@@ -325,6 +324,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			startJournalState();
 		}
 		
+		/** Play the given sound. Must be loaded from resource block. */
+		public void playSound(String id) {
+			ASTRAALResourceFactory.getSoundClip(id).play();
+		}
+		
 		/** Get main game state's inventory. */
 		public Inventory getInventory() {
 			return getMainGameState().getInventory();
@@ -336,7 +340,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			getCaptionCardState().setCamera(new Camera(0, 0, 
 					mCanvasWidth, mCanvasHeight, 
 					getCaptionCardState().getScene()));
-			getCaptionCardState().setBackground(ASTRAALResourceFactory.createAnimation("caption_card_bg"));			
+			getCaptionCardState().setBackground(ASTRAALResourceFactory.getAnimation("caption_card_bg"));			
 
 			setState(StateType.Caption);
 		}
@@ -347,7 +351,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			getJournalState().setCamera(new Camera(0, 0, 
 					mCanvasWidth, mCanvasHeight, 
 					getJournalState().getScene()));
-			getJournalState().setBackground(ASTRAALResourceFactory.createAnimation("caption_card_bg"));			
+			getJournalState().setBackground(ASTRAALResourceFactory.getAnimation("caption_card_bg"));			
 	
 			setState(StateType.Journal);
 		}
@@ -1529,6 +1533,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public StateType getType() { return StateType.Loading; }
 
 		}
+
+
 
 	} // GameThread
 

@@ -30,8 +30,7 @@ public class ASTRAALResSound extends ASTRAALResource {
 		String resourceName = ASTRAALParser.getNodeContents(node);
 		mSoundID = ASTRAALResource.getRawID(resourceName.trim());
 				
-		// We have all the info we need to make this animation, so we're done
-		// until loadResource is called.
+		// Add ourselves to the factory, so we can be used at-will later.
 		ASTRAALResourceFactory.addByID(mID, this);
 	}
 	

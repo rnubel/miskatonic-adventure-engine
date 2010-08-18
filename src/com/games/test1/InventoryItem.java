@@ -16,7 +16,7 @@ public class InventoryItem {
 	
 	/** Construct an inventory item from the item template object. */
 	public InventoryItem(ASTRAALInventoryItem item) {
-		mSprite = ASTRAALResourceFactory.createAnimation(item.getSpriteID());
+		mSprite = ASTRAALResourceFactory.getAnimation(item.getSpriteID());
 		mID = item.getID();
 		mName = item.getName();
 		mDescription = item.getDescription();

@@ -24,7 +24,7 @@
 		<ANIMATION id="bg_lab_hallway_door" fps="0" width="800" height="480" framecount="1">
 			lab_hallway_door
 		</ANIMATION>
-		<SOUND id="test_sound">
+		<SOUND id="snd_click">
 			click
 		</SOUND>
 		
@@ -239,13 +239,13 @@
 		</OBJECT>
 		<OBJECT id="lab_storage1_emptyjar" x="570" y="165" width="50" height="40" sprite="">
 			<EVENT event="onclick">
-				Call showCaption("This jar is empty.");
+				Call showCaption("This jar is empty.");				
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_container" x="461" y="222" width="68" height="38" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("An empty glass container. The glass seems thick and well-made.");
-			Call promptTakeItem("chem_container");
+				Call promptTakeItem("chem_container");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_testtubes" x="571" y="214" width="54" height="47" sprite="">
