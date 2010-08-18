@@ -25,8 +25,7 @@ import com.games.test1.aal.AALStatement;
  * This class parses an ASTRAAL XML file into an ASTRAAL tree (also redundant!).
  */
 public class ASTRAALParser {
-	public static final String DEFAULT_ID = "main";
-	
+	private static final String DEFAULT_ID = "main";	
 	private static final String RESOURCES_TAG = "RESOURCES";
 	private static final String RES_ANIMATION_TAG = "ANIMATION";
 	private static final String RES_SOUND_TAG = "SOUND";
@@ -262,8 +261,8 @@ public class ASTRAALParser {
 				Node eventNode = eventNodes.item(k);
 				if (eventNode.getNodeType() != Node.ELEMENT_NODE)
 					continue;
-        // FIXME: Add check to ensure this is an EVENT tag.
-				
+				// FIXME: Add check to ensure this is an EVENT tag.
+
 				String eventName = getAttributeValue(eventNode, "event", "");
 				String script = getNodeContents(eventNode);
 				
@@ -309,7 +308,7 @@ public class ASTRAALParser {
 				if (resource.getNodeName().equals(RES_ANIMATION_TAG)) {
 					newRes = new ASTRAALResAnimation(rID);				
 				} else if (resource.getNodeName().equals(RES_SOUND_TAG)) {
-					// TODO: Create sound clip resource.
+					newRes = new ASTRAALResSound(rID);
 				}
 				
 				// Have the resource do what it will with the child nodes, to

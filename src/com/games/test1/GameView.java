@@ -1151,6 +1151,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Main menu for the game. */
 		public class MainMenuState extends BasicGameState {
+			private static final String SAVESLOT_DATETIME_FORMAT = "%m/%d %H:%M";
 			private static final int MAIN_MENU_BUTTON_HEIGHT = 40;
 			private static final int MAIN_MENU_BUTTON_WIDTH = 240;
 			private GameUI mUI;
@@ -1206,7 +1207,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i; // Fuckin' embarrassing lack of closures...
-					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Slot #" + i, new UIEvent() {
+					Time time = getTimeOfSaveSlot(i);
+					
+					if (time == null) {
+						continue;
+					}				
+					
+					mUI.addControl(new UIControlButton(
+							MAIN_MENU_BUTTON_WIDTH, 
+							MAIN_MENU_BUTTON_HEIGHT, 
+							"Save Slot #" + i + " (" + time.format(SAVESLOT_DATETIME_FORMAT) + ")", 
+						new UIEvent() {
 						public void execute(GameThread t, UIControl caller) {		
 							t.saveToSlot(slot);
 							// For now, return immediately to the game. Maybe do
@@ -1229,26 +1240,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i;
-					final long timestamp;
-					Time time;
-					// See if this file exists.											
-					File saveslot = new File(context.getFilesDir(), SAVEGAME_FILENAME_BASE + i);
-					timestamp = saveslot.lastModified();						
-										
-					if (timestamp == 0) {
-						// This save slot does not exist.
-						continue;
-					} else {
-						time = new Time();
-						time.set(timestamp);
-					}
+					Time time = getTimeOfSaveSlot(i);
 					
+					if (time == null) {
+						continue;
+					}				
 					
 					mUI.addControl(
 						new UIControlButton(
 							MAIN_MENU_BUTTON_WIDTH, 
 							MAIN_MENU_BUTTON_HEIGHT, 
-							"Save Slot #" + i + " (" + time.format("%m/%d %H:%M") + ")", 
+							"Save Slot #" + i + " (" + time.format(SAVESLOT_DATETIME_FORMAT) + ")", 
 							new UIEvent() {
 							public void execute(GameThread t, UIControl caller) {
 								t.setState(StateType.Loading);
@@ -1264,6 +1266,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 						t.getMainMenuState().showRootMenu();
 					}
 				}),GameUI.POSITION_CENTER, true, 5);		
+			}
+
+			/** Returns the time the save slot was last saved, or null if never. */
+			private Time getTimeOfSaveSlot(int i) {
+				long timestamp;
+				Time time;
+				// See if this file exists.											
+				File saveslot = new File(context.getFilesDir(), SAVEGAME_FILENAME_BASE + i);
+				timestamp = saveslot.lastModified();						
+									
+				if (timestamp == 0) {
+					// This save slot does not exist.
+					time = null;
+				} else {
+					time = new Time();
+					time.set(timestamp);
+				}
+				return time;
 			}
 			
 			

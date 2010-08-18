@@ -53,13 +53,30 @@ public class ASTRAALResource {
 			return 0;
 		} catch (IllegalAccessException e) {
 			return 0;
-		}
-		
+		}		
 	}
+	
+	public static int getRawID(String basename) {
+		Class c = R.raw.class;
+		try {
+			Field f = c.getDeclaredField(basename);
+			return f.getInt(null);
+		} catch (SecurityException e) {
+			return 0; // We screwed yo.
+		} catch (NoSuchFieldException e) {
+			return 0;
+		} catch (IllegalArgumentException e) {
+			return 0;
+		} catch (IllegalAccessException e) {
+			return 0;
+		}	
+	}
+
 
 	public String getID() {
 		return mID;
 	}
+
 
 
 

@@ -8,6 +8,7 @@ import android.media.SoundPool;
 import android.media.MediaPlayer.OnCompletionListener;
 
 public class SoundClip extends Resource {
+	private static final int DEFAULT_VOLUME = 1;
 	private static final int MAX_SIMULTANEOUS_STREAMS = 10;
 	private static SoundPool soundPool;
 	
@@ -34,13 +35,13 @@ public class SoundClip extends Resource {
 	/** Create a new sound clip from an asset file descriptor. */
 	public SoundClip(String soundID, AssetFileDescriptor afd) {
 		setSoundID(soundID);
-		mSPSoundID = soundPool.load(afd, 1); // second arg unused.
+		mSPSoundID = getSoundPool().load(afd, 1); // second arg unused.
 	}
 	
 	/** Play this sound. */
 	public void play(int loop) {
-		// FIXME: extract args.
-		mStreamID = soundPool.play(mSPSoundID, 1, 1, 1, loop, 1);
+		// FIXME: extract arguments.
+		mStreamID = getSoundPool().play(mSPSoundID, DEFAULT_VOLUME, DEFAULT_VOLUME, 1, loop, 1);
 	}
 	
 	/** Play this sound; do not loop. */
@@ -55,7 +56,7 @@ public class SoundClip extends Resource {
 	
 	/** Stop this sound. */
 	public void stop() {
-		soundPool.stop(mStreamID);
+		getSoundPool().stop(mStreamID);
 	}
 
 	
@@ -69,71 +70,3 @@ public class SoundClip extends Resource {
 	}
 }
 
-
-/*
- 
- OLD CRAPPY CODE - I BLAME TED NOT UNDERSTANDING ANDROID'S INTRICACIES
- AND MY ENTIRE FRAMEWORK.
-
-public class SoundClip extends Resource {
-
-	private int mResource;
-	private MediaPlayer mMP;
-	private Context mContext;
-	
-	public SoundClip()
-	{
-		mMP = new MediaPlayer();
-		init();
-	}
-	
-	public SoundClip(int mR, Context c)
-	{
-		mResource = mR;
-		mMP = MediaPlayer.create(c, mResource);
-		init();	
-	}
-	
-	private void init()
-	{
-		//Add handler to release resources when done.
-		mMP.setOnCompletionListener(new OnCompletionListener() {
-
-			public void onCompletion(MediaPlayer mp) {
-				mp.stop();
-				try {
-					mp.prepare();
-				}
-				catch (Exception e) {
-					//Man i hope this doesnt happen
-				}
-			} });
-	}
-	
-
-	
-	public void play()
-	{
-		if (mMP.isPlaying()) { mMP.seekTo(0); }
-		mMP.start();
-	}
-	
-	public void setResource(int mR)
-	{
-		mResource = mR;
-		mMP = MediaPlayer.create(mContext,mResource);
-	}
-	
-	public int getResource()
-	{
-		return mResource;
-	}
-	
-	public void setContext(Context c)
-	{
-		mContext = c;
-	}
-	
-	
-}
- */

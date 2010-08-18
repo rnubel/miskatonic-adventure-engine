@@ -3,6 +3,7 @@ package com.games.test1.astraal;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.R;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
