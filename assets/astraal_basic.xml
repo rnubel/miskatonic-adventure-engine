@@ -24,6 +24,10 @@
 		<ANIMATION id="bg_lab_hallway_door" fps="0" width="800" height="480" framecount="1">
 			lab_hallway_door
 		</ANIMATION>
+		<SOUND id="test_sound">
+			click
+		</SOUND>
+		
 	</RESOURCES>
 	<RESOURCES id="set_two" preload="false">
 	</RESOURCES>
