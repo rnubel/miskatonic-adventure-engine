@@ -18,6 +18,7 @@ import android.os.Parcelable;
  */
 public class Scene {
 	
+	private static final String SELECTED_ITEM_ID = "SELECTED_ITEM_ID";
 	private static final String KEY_SCENE_OBJECTS = "sceneObjects";
 	/** All objects in the scene. */
 	private Vector<DrawnObject> mObjects;
@@ -119,7 +120,7 @@ public class Scene {
 			Rect lZone = lObj.getClickRect();
 			if (lZone.contains(clickX,clickY))
 			{
-				mExecutionState.setVariable("SELECTED_ITEM_ID", new AALValue(item.getID()));
+				mExecutionState.setVariable(SELECTED_ITEM_ID, new AALValue(item.getID()));
 				lObj.doOnCombine(mExecutionState);
 			}
 		}

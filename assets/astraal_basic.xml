@@ -292,6 +292,16 @@
 			<EVENT event="onclick">
 				Call showCaption("BURNER");
 			</EVENT>
+			<EVENT event="oncombine">
+				If [SELECTED_ITEM_ID == "chem_sulfur"] Then
+					Call showCaption("I placed the yellow powder in the combustion tray.");
+					Let lab1_itemInBurner = "chem_sulfur"
+				End
+				If [SELECTED_ITEM_ID == "chem_carbon"] Then
+					Call showCaption("I placed the black powder in the combustion tray.");
+					Let lab1_itemInBurner = "chem_carbon"
+				End
+			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage2_hydrater" x="389" y="126" width="59" height="121">
 			<EVENT event="onclick">
