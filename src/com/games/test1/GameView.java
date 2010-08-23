@@ -356,6 +356,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			setState(StateType.Journal);
 		}
 		
+		/** Set a timer on an object. */
+		public void setTimer(String objectID, long milliseconds) {
+			getMainGameState().setTimer(objectID, milliseconds);
+		}
+		
 		/**
 		 * Set the active state of the game the given state instance.
 		 * @param state State to set as active. The currently-active
@@ -763,7 +768,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					mHalfCaptionControl.addChild(control);
 				}
 			}
-
+			
+			/** Set a timer on an object. 
+			 * @param milliseconds Time to wait before triggering ontimeout event. */
+			public void setTimer(String objectID, long milliseconds) {
+				mScene.getObjectFromID(objectID).setTimer(mExecutor.getExecutionState(), milliseconds);
+			}
 			
 			/** Open the inventory panel. */
 			public void showInventory() {

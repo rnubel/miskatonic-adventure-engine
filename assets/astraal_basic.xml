@@ -37,6 +37,8 @@
 		<ITEM id="chem_carbon" sprite="spr_star" name="Black powder">A black powder, smelling of soot and ash.</ITEM>
 		<ITEM id="chem_container" sprite="spr_star" name="Container">An empty glass container.</ITEM>
 		<ITEM id="chem_water" sprite="spr_star" name="Jug of Water">A jug of clear water.</ITEM>
+		<ITEM id="chem_matches" sprite="spr_star" name="Box of Matches">A box of instant matches.</ITEM>
+		<ITEM id="chem_acid" sprite="spr_star" name="Sulfuric Acid">A container of what I hope to be sulfuric acid.</ITEM>
 	</ITEMS>
 	<JOURNALS>
 		<JOURNAL id="notes" title="Scientists' Notes">
@@ -234,7 +236,7 @@
 				Call showCaption("This jar holds a coarse, black powder. I open the " +
 				"container to sniff it, and cough as the blackish soot nearly gets " +
 				"into my lungs.");
-			Call promptTakeItem("chem_carbon");
+				Call promptTakeItem("chem_carbon");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_emptyjar" x="570" y="165" width="50" height="40" sprite="">
@@ -256,7 +258,7 @@
 		<OBJECT id="lab_storage1_water" x="687" y="271" width="62" height="58" sprite="">
 			<EVENT event="onclick">
 				Call showCaption("A large jug of water, with a handwritten note written on the glass surface. The note reads, 'DISTILLED'.");
-			Call promptTakeItem("chem_water");
+				Call promptTakeItem("chem_water");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_miscjars" x="462" y="276" width="90" height="54" sprite="">
@@ -292,14 +294,54 @@
 			<EVENT event="onclick">
 				Call showCaption("BURNER");
 			</EVENT>
+			
+			<EVENT event="ontimeout">
+				If [chem_stage == 0] Then
+					If [lab1_itemInBurner == "chem_sulfur"] Then
+						Call showCaption(The yellowish smoke that rose up into the reactor smelled foul, and then I remembered: the powder was sulfur, the essential ingredient of sulfuric acid.");
+						Let chem_stage = 1;
+						Call setTimerForObject("lab_storage2_catalyst", 4000);
+					End
+					If [lab1_itemInBurner == "chem_carbon"] Then
+						Call showCaption("The thick, black cloud of smoke made my eyes water, and I realized -- the powder must have been graphite, a form of carbon, which meant this was just ordinary smoke.", "I blew out the burner and waved away the oppressive smoke.");
+					End
+				End
+			</EVENT>
+			
 			<EVENT event="oncombine">
 				If [SELECTED_ITEM_ID == "chem_sulfur"] Then
-					Call showCaption("I placed the yellow powder in the combustion tray.");
-					Let lab1_itemInBurner = "chem_sulfur"
+					Call showCaption("I put the yellow powder in the combustion tray.");
+					Let lab1_itemInBurner = "chem_sulfur";
 				End
 				If [SELECTED_ITEM_ID == "chem_carbon"] Then
-					Call showCaption("I placed the black powder in the combustion tray.");
-					Let lab1_itemInBurner = "chem_carbon"
+					Call showCaption("I put the black powder in the combustion tray.");
+					Let lab1_itemInBurner = "chem_carbon";
+				End
+				If [SELECTED_ITEM_ID == "chem_matches"] Then
+					If [lab1_itemInBurner == "chem_sulfur"] Then
+						Call showCaption("The powder ignites, causing a foul-smelling, yellow smoke to rise up through the tubing and into the reactor.");												
+					End
+					
+					Let chem_stage = 0;
+					Call setTimerForObject("lab_storage2_burner", 4000);
+				End
+			</EVENT>
+		</OBJECT>
+		<OBJECT id="lab_storage2_catalyst" x="100" y="234" width="44" height="30">
+			<EVENT event="onclick">
+				Call showCaption("A box of matches, which I can use to ignite this burner.");
+				Call promptTakeItem("chem_matches");
+			</EVENT>
+			
+			<EVENT event="ontimeout">
+				If [chem_stage == 1] Then
+					If [lab1_itemInBurner == "chem_vanadium"] Then
+						Call showCaption("The gas that exited the reactor was colorless. I waited, hoping the reaction had worked.");
+						Call setTimerForObject("lab_storage2_hydrater", 4000);
+						Let chem_stage = 2;
+					Else
+						Call showCaption("The gas that came out of the reactor was no different from before. Perhaps I missed a step.... ", "Does the reactor require a component inserted into that chamber at its top? Perhaps a catalyst of some sort? I'll have to look around...");
+					End
 				End
 			</EVENT>
 		</OBJECT>
@@ -307,12 +349,20 @@
 			<EVENT event="onclick">
 				Call showCaption("HYDRATER");
 			</EVENT>
+			
+			<EVENT event="ontimeout">
+				If [chem_stage == 2] Then
+					Call showCaption("The gas finished bubbling up into the water, and the liquid formed is clear, fully colorless, and had no odor.", "I know, however, that such are the properties of sulfuric acid. Perhaps this will work.");
+					Call giveItem("chem_acid");
+				End
+			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage2_catalyst" x="231" y="81" width="67" height="42">
 			<EVENT event="onclick">
 				Call showCaption("CATALYST");
 			</EVENT>
 		</OBJECT>
+		
 	</SCENE>
 	<SCENE id="scene_lab_hallway_door" resourceblock="first_area" background="bg_lab_hallway_door" width="800" height="480">
 		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>

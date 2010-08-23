@@ -264,7 +264,14 @@ public class AALExecutionState {
 		if (functionName.equals("playSound")) {
 			String id = (String) args[0].getValue();			
 			mExecutor.playSound(id);
-		} 
+		} else
+		
+		// setTimerForObject [object_id] [delay]: SETS THE TIMER FOR THE GIVEN OBJECT.
+		if (functionName.equals("setTimerForObject")) {
+			String id = (String) args[0].getValue();
+			int delay = (Integer) args[1].getValue();
+			mExecutor.setTimer(id, delay);			
+		}
 			
 
 		

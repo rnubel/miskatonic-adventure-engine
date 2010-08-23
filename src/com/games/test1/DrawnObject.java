@@ -1,6 +1,8 @@
 package com.games.test1;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.games.test1.aal.AALExecutionState;
 import com.games.test1.astraal.ASTRAALResourceFactory;
@@ -35,6 +37,7 @@ public abstract class DrawnObject {
 	
 	/** Event handler for events for this object. */
 	private EventHandler mEventHandler;
+	private Timer mTimer;
  	
 	public static Paint basicPaint = new Paint();
 
@@ -103,6 +106,7 @@ public abstract class DrawnObject {
 		c.restore();
 	}
 	
+	/** Respond to an onClick event. */
 	public void doOnClick(AALExecutionState execState)	{		
 		// If we have an event handler, use it to respond.
 		if (hasEventHandler()) {
@@ -123,11 +127,32 @@ public abstract class DrawnObject {
 	}
 
 	public void doOnEnter(AALExecutionState state) {
- 	  if (hasEventHandler()) {
+		if (hasEventHandler()) {
 			mEventHandler.respondTo(EventHandler.Type.OnEnter, state);
 		}
-  }
+	}
+	
+	public void doOnTimeout(AALExecutionState state) {
+		if (hasEventHandler()) {
+			mEventHandler.respondTo(EventHandler.Type.OnTimeout, state);
+		}
+	}
 
+	/** Set this object's timer. 
+	 *  @param delay Time to wait in milliseconds before timing out. */
+	public void setTimer(final AALExecutionState state, long delay) {
+		// Create a timer and set it to execute 'delay' ms later.
+		final DrawnObject obj = this;
+		mTimer = new Timer();
+		mTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				obj.doOnTimeout(state);
+			}
+			
+		}, delay);
+	}
+	
 	/**
 	 * Update method. This is called by the Scene when it updates all objects it possesses.
 	 * @return whether or not to remove this object.

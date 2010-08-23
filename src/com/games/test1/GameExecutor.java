@@ -397,4 +397,14 @@ public class GameExecutor {
 	public void playSound(String id) {
 		mGame.playSound(id);
 	}
+	
+	/** Set a timer for the given object. */
+	public void setTimer(String objID, long milliseconds) {
+		mGame.setTimer(objID, milliseconds);
+	}
+
+	/** Return a reference to the execution state. */
+	public AALExecutionState getExecutionState() {
+		return mExecutionState;
+	}
 }
