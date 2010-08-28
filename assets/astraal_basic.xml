@@ -3,6 +3,10 @@
 		<ANIMATION id="caption_card_bg" fps="1" width="800" height="600" framecount="1">
 			captioncard
 		</ANIMATION>
+		<ANIMATION id="journal_bg" fps="1" width="800" height="600" framecount="1">
+			journal_bg
+		</ANIMATION>
+		
 		<ANIMATION id="spr_star" fps="4" width="32" height="32" framecount="1">
 			star
 		</ANIMATION>
@@ -24,6 +28,23 @@
 		<ANIMATION id="bg_lab_hallway_door" fps="0" width="800" height="480" framecount="1">
 			lab_hallway_door
 		</ANIMATION>
+		
+		<ANIMATION id="lab_sulfur" fps="0" width="47" height="37" framecount="1">
+			lab_sulfur	
+		</ANIMATION>
+		<ANIMATION id="lab_carbon" fps="0" width="47" height="37" framecount="1">
+			lab_carbon
+		</ANIMATION>
+		<ANIMATION id="lab_container" fps="0" width="44" height="50" framecount="1">
+			lab_container	
+		</ANIMATION>
+		<ANIMATION id="lab_note" fps="0" width="53" height="28" framecount="1">
+			lab_note
+		</ANIMATION>
+		<ANIMATION id="lab_water" fps="0" width="67" height="59" framecount="1">
+			lab_water
+		</ANIMATION>
+		
 		<SOUND id="snd_click">
 			click
 		</SOUND>
@@ -31,15 +52,20 @@
 	</RESOURCES>
 	<RESOURCES id="set_two" preload="false">
 	</RESOURCES>
+	
+	
 	<ITEMS>
 		<ITEM id="item_star" sprite="spr_star" name="Star">A star, though not of the stone variety.</ITEM>
 		<ITEM id="chem_sulfur" sprite="spr_star" name="Yellow powder">A yellow powder, smelling of brimstone.</ITEM>
 		<ITEM id="chem_carbon" sprite="spr_star" name="Black powder">A black powder, smelling of soot and ash.</ITEM>
 		<ITEM id="chem_container" sprite="spr_star" name="Container">An empty glass container.</ITEM>
+		<ITEM id="chem_vanadium" sprite="spr_star" name="Vanadium Oxide">A catalyst, which I recall requires a very high temperature to be effective.</ITEM>
 		<ITEM id="chem_water" sprite="spr_star" name="Jug of Water">A jug of clear water.</ITEM>
 		<ITEM id="chem_matches" sprite="spr_star" name="Box of Matches">A box of instant matches.</ITEM>
 		<ITEM id="chem_acid" sprite="spr_star" name="Sulfuric Acid">A container of what I hope to be sulfuric acid.</ITEM>
 	</ITEMS>
+	
+	
 	<JOURNALS>
 		<JOURNAL id="notes" title="Scientists' Notes">
 			<PAGE id="lab_on_sulfur" title="On burning sulfur">
@@ -53,16 +79,21 @@
 			</PAGE>
 		</JOURNAL>
 	</JOURNALS>
+	
+	
 	<SCENE id="scene_lab1" resourceblock="first_area" background="bg_lab1" width="800" height="480">
 		<NAVIGATION position="right" to_scene="scene_lab2"/>
 		<OBJECT id="lab_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
-				Call showCaptionCard("I awoke, as if from a deep slumber, but with little of the ease of waking that one would expect after such a sleep. Breath entered my body, drawn in reflexively, forcing its way into my stiffened chest.", "I coughed, the spasm racking my frame but bringing feeling to my limbs, which felt in some way different -- perhaps it had been long indeed since I fell asleep.", "Opening my eyes, the dim lighting of my surroundings caused me no discomfort. However, the haze of my sudden animation obscured the nature of the sight, and only gradually did my vision truly come into focus.");			
-				Call fadeIn(2);
-				Call unlockJournalPage("personal", "one");
+				Call showCaptionCard("I awoke, as if from a deep slumber, but with little of the ease of waking that one would expect after such a sleep. Breath entered my body, drawn in reflexively, forcing its way into my stiffened chest.", "I coughed, the spasm racking my frame but bringing feeling to my limbs, which felt in some way different -- perhaps it had been long indeed since I fell asleep.", "Opening my eyes, the dim lighting of my surroundings caused me no discomfort. However, the haze of my sudden animation obscured the nature of the sight, and only gradually did my vision truly come into focus.");
+				Call fadeIn(2);	
+				Call doOnReturnToMainGame("Call setTimerForObject('lab_null', 4000);");
 				
 				Let lab_hadMemoryCaption = False;
 				Let lab_enteredLab2 = False;
+			</EVENT>
+			<EVENT event="ontimeout">
+				Call showNote("Try clicking on objects to interact with them.");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_jar" x="151" y="96" width="72" height="72" sprite="">
@@ -86,10 +117,15 @@
 				
 			</EVENT>
 		</OBJECT>
+		<OBJECT id="lab_vanadium" x="248" y="127" width="40" height="40" sprite="spr_star">
+			<EVENT event="onclick">
+				Call showCaption("VANADIUM");
+				Call promptTakeAndRemoveItem("chem_vanadium", "lab_vanadium");					
+			</EVENT>
+		</OBJECT>
 		<OBJECT id="lab_skull" x="232" y="189" width="47" height="53" sprite="">
 			<EVENT event="onclick">
-				Call showCaption("A human skull. Most likely, a real one.");
-				Call giveItem("item_star");
+				Call showCaption("A human skull. Most likely, a real one.");				
 				If [lab_hadMemoryCaption == False] Then
 					Let lab_hadMemoryCaption = True;
 					Call showMoreCaptions("Thinking more, I realized my memory was lacking in some detail -- and, probing carefully my mind as one might feel about a darkened room,", "I found things in considerable disarray: for I knew not who I was, nor where I was, nor how I had ended up here...");
@@ -215,7 +251,7 @@
 			</EVENT>
 		</OBJECT>
 	</SCENE>
-	<SCENE id="scene_lab_storage1" resourceblock="first_area" background="bg_lab_storage1" width="800" height="480">
+	<SCENE id="scene_lab_storage1" resourceblock="first_area" background="bg_lab_storage1" width="800" height="445">
 		<NAVIGATION position="left" to_scene="scene_lab_storage2"/>
 		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
 		<OBJECT id="lab_storage1_null" x="0" y="0" width="0" height="0" sprite="">
@@ -223,31 +259,31 @@
 				Call showCaptionCard("The room which I entered was some sort of storage room for a scientist, or, considering the variety of components, perhaps an alchemist.");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_storage1_sulfur" x="460" y="165" width="50" height="40" sprite="">
+		<OBJECT id="lab_storage1_sulfur" x="460" y="165" width="50" height="40" sprite="lab_sulfur">
 			<EVENT event="onclick">
 				Call showCaption("This jar holds a yellow powder. Unscrewing the top, the " +
 				"pungent odor of brimstone wafted out, strong enough to give me cause " +
 				"to retighten the lid.");
-			Call promptTakeItem("chem_sulfur");
+				Call promptTakeAndRemoveItem("chem_sulfur", "lab_storage1_sulfur");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_storage1_carbon" x="512" y="165" width="50" height="40" sprite="">
+		<OBJECT id="lab_storage1_carbon" x="512" y="165" width="50" height="40" sprite="lab_carbon">
 			<EVENT event="onclick">
 				Call showCaption("This jar holds a coarse, black powder. I open the " +
 				"container to sniff it, and cough as the blackish soot nearly gets " +
 				"into my lungs.");
-				Call promptTakeItem("chem_carbon");
+				Call promptTakeAndRemoveItem("chem_carbon", "lab_storage1_carbon");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_emptyjar" x="570" y="165" width="50" height="40" sprite="">
 			<EVENT event="onclick">
-				Call showCaption("This jar is empty.");				
+				Call showCaption("This jar is empty, and seems too worn to be of any use.");				
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_storage1_container" x="461" y="222" width="68" height="38" sprite="">
+		<OBJECT id="lab_storage1_container" x="461" y="222" width="44" height="50" sprite="lab_container">
 			<EVENT event="onclick">
 				Call showCaption("An empty glass container. The glass seems thick and well-made.");
-				Call promptTakeItem("chem_container");
+				Call promptTakeAndRemoveItem("chem_container", "lab_storage1_container");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_testtubes" x="571" y="214" width="54" height="47" sprite="">
@@ -255,10 +291,10 @@
 				Call showCaption("A rack of worn test-tubes. I don’t think I’ll need these, as they’re more for experimentation than practical use.");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_storage1_water" x="687" y="271" width="62" height="58" sprite="">
+		<OBJECT id="lab_storage1_water" x="687" y="271" width="62" height="58" sprite="lab_water">
 			<EVENT event="onclick">
-				Call showCaption("A large jug of water, with a handwritten note written on the glass surface. The note reads, 'DISTILLED'.");
-				Call promptTakeItem("chem_water");
+				Call showCaption("A large jug of water, with a handwritten note scrawled on the glass surface. The note reads, 'DISTILLED'.");
+				Call promptTakeAndRemoveItem("chem_water", "lab_storage1_water");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage1_miscjars" x="462" y="276" width="90" height="54" sprite="">
@@ -276,14 +312,22 @@
 				Call showCaption("A box of miscellaneous metal and glass parts. Unless I need one specifically, there's no use taking any of these.");
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_storage1_note" x="630" y="306" width="45" height="24" sprite="">
+		<OBJECT id="lab_storage1_note" x="630" y="306" width="45" height="24" sprite="lab_note">
 			<EVENT event="onclick">
 				Call unlockJournalPage("notes", "lab_on_sulfur");
+				Call hideItem("lab_storage1_note");
 			</EVENT>
 		</OBJECT>
 	</SCENE>
 	<SCENE id="scene_lab_storage2" resourceblock="first_area" background="bg_lab_storage2" width="800" height="444">
 		<NAVIGATION position="right" to_scene="scene_lab_storage1"/>
+		
+		<OBJECT id="lab_storage2_null" x="0" y="0" width="0" height="0">
+			<EVENT event="onload">
+				Let lab1_itemInBurner = "";
+				Let lab1_itemInReactor = "";
+			</EVENT>
+		</OBJECT>
 		
 		<OBJECT id="lab_storage2_furnace" x="211" y="111" width="139" height="145">
 			<EVENT event="onclick">
@@ -298,7 +342,7 @@
 			<EVENT event="ontimeout">
 				If [chem_stage == 0] Then
 					If [lab1_itemInBurner == "chem_sulfur"] Then
-						Call showCaption(The yellowish smoke that rose up into the reactor smelled foul, and then I remembered: the powder was sulfur, the essential ingredient of sulfuric acid.");
+						Call showCaption("The yellowish smoke that rose up into the reactor smelled foul, and then I remembered: the powder was sulfur, the essential ingredient of sulfuric acid.");
 						Let chem_stage = 1;
 						Call setTimerForObject("lab_storage2_catalyst", 4000);
 					End
@@ -319,7 +363,7 @@
 				End
 				If [SELECTED_ITEM_ID == "chem_matches"] Then
 					If [lab1_itemInBurner == "chem_sulfur"] Then
-						Call showCaption("The powder ignites, causing a foul-smelling, yellow smoke to rise up through the tubing and into the reactor.");												
+						Call showCaption("The powder begins to combust...");												
 					End
 					
 					Let chem_stage = 0;
@@ -327,22 +371,10 @@
 				End
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_storage2_catalyst" x="100" y="234" width="44" height="30">
+		<OBJECT id="lab_storage2_matches" x="100" y="234" width="44" height="30">
 			<EVENT event="onclick">
 				Call showCaption("A box of matches, which I can use to ignite this burner.");
 				Call promptTakeItem("chem_matches");
-			</EVENT>
-			
-			<EVENT event="ontimeout">
-				If [chem_stage == 1] Then
-					If [lab1_itemInBurner == "chem_vanadium"] Then
-						Call showCaption("The gas that exited the reactor was colorless. I waited, hoping the reaction had worked.");
-						Call setTimerForObject("lab_storage2_hydrater", 4000);
-						Let chem_stage = 2;
-					Else
-						Call showCaption("The gas that came out of the reactor was no different from before. Perhaps I missed a step.... ", "Does the reactor require a component inserted into that chamber at its top? Perhaps a catalyst of some sort? I'll have to look around...");
-					End
-				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage2_hydrater" x="389" y="126" width="59" height="121">
@@ -350,16 +382,60 @@
 				Call showCaption("HYDRATER");
 			</EVENT>
 			
+			<EVENT event="oncombine">
+				If [SELECTED_ITEM_ID == "chem_water"] Then
+					Call showCaption("I fill the hydration chamber with water.");
+					Let lab1_hydraterFilled = True;
+				Else
+					If [chem_stage == 3] Then
+						If [SELECTED_ITEM_ID == "chem_container"] Then
+							Call giveItem("chem_acid");
+						Else
+							Call showCaption("No, that won't work.");
+						End
+					Else
+						Call showCaption("This chamber needs to be filled with water.");
+					End
+				End
+			</EVENT>
+			
 			<EVENT event="ontimeout">
 				If [chem_stage == 2] Then
-					Call showCaption("The gas finished bubbling up into the water, and the liquid formed is clear, fully colorless, and had no odor.", "I know, however, that such are the properties of sulfuric acid. Perhaps this will work.");
-					Call giveItem("chem_acid");
+					If [lab1_hydraterFilled == True] Then
+						Call showCaption("The gas finished bubbling up into the water, and the liquid formed is clear, fully colorless, and had no odor.", "I know, however, that such are the properties of sulfuric acid. Perhaps it worked. I need to transfer the acid to a container, though...");
+						Let chem_stage = 3;						
+					Else
+						Call showCaption("The gas came out of the tubing and... quickly dissipated into the air. I need a way to turn this gas into a liquid... perhaps by bubbling it into water?");
+						Let chem_stage = 0;
+					End
 				End
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage2_catalyst" x="231" y="81" width="67" height="42">
 			<EVENT event="onclick">
 				Call showCaption("CATALYST");
+			</EVENT>
+			
+			<EVENT event="oncombine">
+				If [SELECTED_ITEM_ID == "chem_vanadium"] Then
+					Call showCaption("I put the powder into the container and push it down, into the reactor. That should do it.");
+					Let lab1_itemInReactor = "chem_vanadium";
+				Else
+					Call showCaption("This chamber is meant for a catalyst... this isn't a catalyst.");
+				End
+			</EVENT>
+			
+			<EVENT event="ontimeout">
+				If [chem_stage == 1] Then
+					If [lab1_itemInReactor == "chem_vanadium"] Then
+						Call showCaption("The gas that exited the reactor was colorless. I waited, hoping the reaction had worked.");
+						Let chem_stage = 2;
+						Call setTimerForObject("lab_storage2_hydrater", 4000);						
+					Else
+						Call showCaption("The gas that came out of the reactor was no different from before. Perhaps I missed a step.... ", "Does the reactor require a component inserted into that chamber at its top? Perhaps a catalyst of some sort? I'll have to look around...");
+						Let chem_stage = 0;
+					End
+				End
 			</EVENT>
 		</OBJECT>
 		

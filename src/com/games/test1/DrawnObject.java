@@ -250,7 +250,11 @@ public abstract class DrawnObject {
 	}
 
 	public void setSprite(String spriteID) {
-		mAnimation = ASTRAALResourceFactory.getAnimation(spriteID);		
+		if (spriteID != "") {
+			mAnimation = ASTRAALResourceFactory.getAnimation(spriteID);
+		} else {
+			mAnimation = null;
+		}
 	}
 
 

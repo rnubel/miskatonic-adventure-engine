@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  */
 public class AALToken {
 	public enum Type {
-		StringLiteral ("\\\".+?\\\""),
+		StringLiteral ("(\\\".*?\\\"|'.*?')"),
 		Let ("Let"),
 		Semicolon (";"),
 		If ("If"),
@@ -52,8 +52,11 @@ public class AALToken {
 
 	private Type mType;
 	private AALValue mValue;
+	private String mToken;
 	
 	public AALToken(String token) {
+		setToken(token);
+		
 		/* Find the token type. */
 		for (Type t : Type.values()) {
 			if (Pattern.matches(t.getPattern(), token)) {
@@ -74,6 +77,7 @@ public class AALToken {
 			}
 		}
 	}
+		
 	
 	public AALToken(Type t) {
 		mType = t;
@@ -130,5 +134,15 @@ public class AALToken {
 				getType() == Type.StringLiteral ||
 				getType() == Type.FloatLiteral ||
 				getType() == Type.BoolLiteral);
+	}
+
+
+	public void setToken(String mToken) {
+		this.mToken = mToken;
+	}
+
+
+	public String getToken() {
+		return mToken;
 	}
 }

@@ -19,8 +19,8 @@ public class EventHandler {
 		OnClick,
 		OnLoad, 
 		OnCombine,
-    OnEnter,
-    OnTimeout
+		OnEnter,
+		OnTimeout
 	}
 	
 	public static Type getTypeFromEventName(String event) {
@@ -46,10 +46,10 @@ public class EventHandler {
 	}
 	
 	public void respondTo(Type type, AALExecutionState state) {
-		try {
-			eventMap.get(type).execute(state);
-		} catch(NullPointerException e) {
-      Log.w("EventHandler", "Exception thrown when handling event " + type.toString() + ": " + e.getMessage());
-		}		
+		if (eventMap.containsKey(type)) {
+			if (eventMap.get(type) != null) {
+				eventMap.get(type).execute(state);
+			}
+		} 		
 	}
 }

@@ -12,6 +12,7 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.games.test1.*;
 import com.games.test1.GameView.*;
@@ -259,6 +260,9 @@ public class GameExecutor {
 		
 		// Give the scene an execution state for executing scripts.
 		mGame.setExecutionState(mExecutionState);
+		
+		// Flush our execution buffer.
+		flushBuffer();
 				
 		// Reload the scene's state (object positions and such).
 		if (!restoreStateForCurrentScene()) {
@@ -267,8 +271,8 @@ public class GameExecutor {
 			doOnLoadForSceneObjects();
 		}
 
-    // Call onEnter events for all scene objects.
-    doOnEnterForSceneObjects();
+		// Call onEnter events for all scene objects.
+		doOnEnterForSceneObjects();
 
 		// Remove the loading screen if it's still up.
 		if (mGame.getCurrentStateType() == StateType.Loading) {
@@ -375,7 +379,18 @@ public class GameExecutor {
 	
 	/** Unlock the given journal page. */
 	public void unlockJournalPage(String journalID, String pageID) {
-		mAstraal.getJournalByID(journalID).getPageByID(pageID).setUnlocked(true);
+		ASTRAALJournal j = mAstraal.getJournalByID(journalID);
+		if (j == null) {
+			Log.w("Miskatonic", "Attempted to unlock page from nonexistant journal " + journalID + ".");			
+		} else {
+			ASTRAALJournalPage p = j.getPageByID(pageID);
+			if (p == null) {
+				Log.w("Miskatonic", "Attempted to unlock nonexistant page " + pageID + " in journal " + journalID + ".");
+			} else {
+				p.setUnlocked(true);
+			}
+		}
+		
 		mJournalState.addUnlockedPage(journalID, pageID);
 	}
 	
@@ -389,8 +404,13 @@ public class GameExecutor {
 	public void executeBuffer() {
 		if (mStatementBuffer != null) { 
 			mStatementBuffer.execute(mExecutionState);
-			mStatementBuffer = null; 
+			flushBuffer(); 
 		}
+	}
+
+	/** Flush our execution buffer. */
+	public void flushBuffer() {
+		mStatementBuffer = null;
 	}
 
 	/** Play the given sound. */

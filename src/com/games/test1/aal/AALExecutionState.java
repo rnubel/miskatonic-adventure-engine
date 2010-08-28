@@ -152,6 +152,13 @@ public class AALExecutionState {
 			DrawnObject o = mScene.getObjectFromID(objID);
 			o.setSprite(sprID);
 		} else
+			
+		// hideObject [obj_id]: HIDES THE OBJECT FROM VIEW.
+		if (functionName.equals("hideObject")) {
+			String  objID = (String)(args[0].getValue());
+			DrawnObject o = mScene.getObjectFromID(objID);
+			o.setSprite("");
+		} else
 						
 		// setObjectAnimationFPS [obj_id] [fps]: SETS THE OBJECT'S ANIMATION'S
 		// 	FRAMES-PER-SECOND.
@@ -165,7 +172,7 @@ public class AALExecutionState {
 				
 		// getObjectAnimationFrame [obj_id] [frame_num]: GETS THE OBJECT'S ANIMATION'S
 		// 	FRAME NUMBER.
-		if (functionName.equals("GetObjectAnimationFrame")) {
+		if (functionName.equals("getObjectAnimationFrame")) {
 			String objID = (String)(args[0].getValue());
 						
 			DrawnObject o = mScene.getObjectFromID(objID);
@@ -218,6 +225,18 @@ public class AALExecutionState {
 			mExecutor.getGame().getMainGameState().addToHalfCaption(captions);
 		} else
 			
+		// showNote [message]: SHOWS A NOTE AT THE TOP OF THE SCREEN.
+		if (functionName.equals("showNote")) {
+			// Dynamically read in the arguments. If we need any special flags/etc, put
+			// those first.
+			Vector<String> captions = new Vector<String>();
+			for (AALValue v : args) {
+				captions.add((String) v.getValue());
+			}
+			
+			mExecutor.getGame().showNote(captions);
+		} else
+			
 		// fadeIn [speed assumed 5]: FADE IN FROM BLACK.
 		if (functionName.equals("fadeIn")) {
 			int speed = (args.length > 0 ? (Integer) args[0].getValue() : 5);
@@ -239,6 +258,14 @@ public class AALExecutionState {
 			
 			mExecutor.getGame().promptPlayerToTakeItem(itemID);
 		} else
+			
+		// promptTakeItem [item_id]: PROMPT PLAYER TO TAKE ITEM.
+		if (functionName.equals("promptTakeAndRemoveItem")) {
+			String itemID = (String) args[0].getValue(),
+				   objectID = (String) args[1].getValue();
+			
+			mExecutor.getGame().promptPlayerToTakeItem(itemID, objectID);
+		} else			
 			
 		// unlockJournalPage [journal_id] [page_id]: ALLOW THE PLAYER TO READ THE GIVEN JOURNAL PAGE.
 		if (functionName.equals("unlockJournalPage")) {

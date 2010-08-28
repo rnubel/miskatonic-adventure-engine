@@ -33,7 +33,7 @@ public class AALParser {
 	public void throwParsingError(String tag) {
 		System.err.print("ERROR " + tag + ": Invalid syntax near (probably before) tokens ");
 		for (int i = 0; i < Math.min(5, toks.size()); i++) {
-			System.err.print(toks.get(i).getType().getPattern() + "  ");
+			System.err.print(toks.get(i).getToken() + "  ");
 		}
 		System.err.println();
 	}
@@ -188,7 +188,7 @@ public class AALParser {
 			argVec.add(parseExpression());			
 			
 			if (peekType() != AALToken.Type.Comma && peekType() != AALToken.Type.RightParen) {
-				throwParsingError("IN FUNCTION CALL");
+				throwParsingError("[argument list malformed for " + funcName + "]");
 				break;
 			} else {
 				// Optional consume:
@@ -197,7 +197,7 @@ public class AALParser {
 			
 			// Progress check.
 			if (toknum == toks.size()) {
-				throwParsingError("IN FUNCTION CALL 2");
+				throwParsingError("[argument list seriously malformed for " + funcName + "]");
 				break;
 			}
 		}

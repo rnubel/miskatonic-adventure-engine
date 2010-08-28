@@ -25,10 +25,12 @@ import com.games.test1.ui.GameUI;
 import com.games.test1.ui.UIControl;
 import com.games.test1.ui.UIControlButton;
 import com.games.test1.ui.UIControlButtonImage;
+import com.games.test1.ui.UIControlButtonLabelledImage;
 import com.games.test1.ui.UIControlButtonListItem;
 import com.games.test1.ui.UIControlCaption;
 import com.games.test1.ui.UIControlInventory;
 import com.games.test1.ui.UIControlNavigator;
+import com.games.test1.ui.UIControlNote;
 import com.games.test1.ui.UIEvent;
 
 import android.content.Context;
@@ -85,7 +87,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	public static Bitmap iconCompass;
 	public static Bitmap iconJournal;
 	public static Bitmap imageNavigatorRight;
+	public static Bitmap imageUINote;
 	public static Bitmap iconInventory;
+	public static Bitmap imageJournalItem;
 	public Bitmap overlayRadial;
 	public Bitmap overlayStress;
 
@@ -167,8 +171,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconJournal = BitmapFactory.decodeResource(mRes, R.drawable.journal);
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
+			imageUINote = BitmapFactory.decodeResource(mRes, R.drawable.ui_note);
 			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
 			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect2);
+			imageJournalItem = BitmapFactory.decodeResource(mRes, R.drawable.journal_item);
 	
 
 			// Make sure we don't start trying to draw anything, not until startGame
@@ -314,9 +320,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			getMainGameState().showHalfCaption(captions);
 		}
 		
-		/** Prompt the player to take a given item. */
+		/** Show a note, which is intended for OOC aspects of the game. */
+		public void showNote(Vector<String> captions) {
+			getMainGameState().showNote(captions);
+		}
+		public void showNote(String caption) {
+			getMainGameState().showNote(caption);
+		}
+		
+		/** Prompt the player to take a given item. 
+		 * @param objectID */
 		public void promptPlayerToTakeItem(String itemID) {
-			getMainGameState().showItemPrompt(itemID);
+			promptPlayerToTakeItem(itemID, "");
+		}
+		
+		public void promptPlayerToTakeItem(String itemID, String objectID) {
+			getMainGameState().showItemPrompt(itemID, objectID);
 		}
 
 		/** Show the journal screen. */
@@ -351,7 +370,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			getJournalState().setCamera(new Camera(0, 0, 
 					mCanvasWidth, mCanvasHeight, 
 					getJournalState().getScene()));
-			getJournalState().setBackground(ASTRAALResourceFactory.getAnimation("caption_card_bg"));			
+			getJournalState().setBackground(ASTRAALResourceFactory.getAnimation("journal_bg"));			
 	
 			setState(StateType.Journal);
 		}
@@ -499,6 +518,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			try {
 				/** Use our GameExecutor, which knows more about these things. */
 				mExecutor.saveToBundle(b);
+				b.putBoolean("isMiskatonicBundle", true);
 			} catch (Exception e) {
 				Log.w("Miskatonic", "Error saving: " + e.getMessage());
 			}
@@ -506,7 +526,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 		/** Load the game from a bundle. */
 		public void loadFromBundle(Bundle b) {
-			mBundleToLoad = b;			
+			if (b.containsKey("isMiskatonicBundle")) {
+				mBundleToLoad = b;
+			} else {
+				Log.w("Miskatonic", "Non-Miskatonic bundle passed in. Ignoring.");
+			}
 		}
 
 		/** Save the game to a file. 
@@ -663,6 +687,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private InventoryItem mSelectedInventoryItem = null;
 
 			private UIControlCaption mHalfCaptionControl;
+
+			private UIControlNote mNoteControl;
 			
 			public MainGameState() { 
 			
@@ -731,11 +757,29 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			public void addToHalfCaption(Vector<String> captions) {
 				mHalfCaptionControl.addCaptions(captions);
 			}	
-
+			
+			/** Show a note at the top of the screen. Useful for tutorials, etc. */
+			public void showNote(Vector<String> captions) {
+				// Clear out old notes and add a new one.
+				mUI.removeControlsFromPosition(GameUI.POSITION_TOP);				
+				mNoteControl = new UIControlNote((int) (getWidth() * .8), (int)(getHeight() * .2), captions);
+				mUI.addControl(mNoteControl, GameUI.POSITION_TOP);				
+			}
+			
+			/** Overloaded for convenience. */
+			public void showNote(String caption) {
+				Vector<String> captions = new Vector<String>();
+				captions.add(caption);
+				showNote(captions);
+			}
+			
+			
 			/** Show a prompt to take an item. This is added as a UI element
 			 *  to the bottom of the screen, essentially becoming part of the
-			 *  half-caption. */
-			public void showItemPrompt(final String itemID) {
+			 *  half-caption. 
+			 * @param itemID ID of item to take.
+			 * @param objectID ID of object to remove on take. */
+			public void showItemPrompt(final String itemID, final String objectID) {
 				// If we already have the item, do not bother. This
 				// does not allow stacking, but such a capacity could
 				// be added in later by removing this check and instead
@@ -753,11 +797,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					new UIEvent() {
 						@Override
 						public void execute(GameThread game, UIControl caller) {
-							game.getExecutor().giveItemToPlayer(itemID);
+							game.getExecutor().giveItemToPlayer(itemID);							
+							game.showNote("Item received: " + mInventory.getItemName(itemID));
+							if (objectID != "") {
+								// FIXME: Refactor to a "hideObject" call.
+								game.getMainGameState().getScene().getObjectFromID(objectID).setSprite("");
+							}
 							caller.removeSelf();
 						}
 					}
-				);
+				); 
 				
 				mUI.addControl(
 					control,						
@@ -784,7 +833,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 			/** Add a navigator object to an edge of the scene. Called via AAL, essentially. */
 			public void addNavigationCue(String side, String sceneID) {
-				// TODO: Extend DrawnObject to add a Navigator, which handles adding the AAL script and such.
 				// Position the Navigator (FIXME: Abstract this along with GameUI's positioning)
 				int x = 0, y = mScene.getHeight()/2 - NavigationCue.NAVIGATOR_HEIGHT/2;
 				
@@ -1065,7 +1113,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 						GameUI.POSITION_BOTTOM);
 				
 				for (final ASTRAALJournal j : mExecutor.getJournalList()) {
-					mUI.addControl(new UIControlButtonListItem(80, 35, j.getTitle(), new UIEvent() {
+					mUI.addControl(new UIControlButtonLabelledImage((int)(getWidth() * .6), 35, j.getTitle(), imageJournalItem, 
+					new UIEvent() {
 						public void execute(GameThread game, UIControl caller) {
 							game.getJournalState().showJournal(j.getID());
 						}						
@@ -1096,7 +1145,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				for (final ASTRAALJournalPage p : mExecutor.getJournalPages(id) ) {
 					String label = (p.isUnlocked() ? p.getTitle() : JOURNAL_LOCKED_LABEL);					
 					mUI.addControl(
-							new UIControlButtonListItem((int)(getWidth() * .6), 32, label,
+							new UIControlButtonLabelledImage((int)(getWidth() * .6), 32, label, imageJournalItem,
 									new UIEvent() {								
 								public void execute(GameThread game, UIControl caller) {
 									if (p.isUnlocked()) {
@@ -1222,15 +1271,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i; // Fuckin' embarrassing lack of closures...
 					Time time = getTimeOfSaveSlot(i);
+					String slotCaption;
 					
 					if (time == null) {
-						continue;
-					}				
+						slotCaption = "Save Slot #" + i + " (empty)";
+					} else {
+						slotCaption = "Save Slot #" + i + " (" + time.format(SAVESLOT_DATETIME_FORMAT) + ")";
+					}
 					
 					mUI.addControl(new UIControlButton(
 							MAIN_MENU_BUTTON_WIDTH, 
 							MAIN_MENU_BUTTON_HEIGHT, 
-							"Save Slot #" + i + " (" + time.format(SAVESLOT_DATETIME_FORMAT) + ")", 
+							slotCaption, 
 						new UIEvent() {
 						public void execute(GameThread t, UIControl caller) {		
 							t.saveToSlot(slot);
@@ -1330,7 +1382,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		} // MainMenuState
 		
 		
-		/** Runs the sanity minigame. */
+		/** Runs the sanity minigame. */ 
 		public class SanityMiniGameState extends com.games.test1.State {
 			private static final int AMPLITUDE_PADDING = 30;
 			private static final int OSCILLATION_AMPLITUDE_MULTIPLIER = 5;
@@ -1344,6 +1396,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private static final float WAVELENGTH_MULTIPLIER = 20f;
 			private static final double MAX_OVERLAY_ALPHA = 100;
 			
+			private GameUI mUI; 
+
+		
 			private Bitmap mSanityBackgroundImage;
 			
 			private long mTimeOfLastTap;
@@ -1364,7 +1419,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			
 			public SanityMiniGameState() {
-				
+				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);				
 			}
 			
 			public void start() {
@@ -1377,6 +1432,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				mSliceHeight = mSanityBackgroundImage.getHeight() / NUM_SLICES_TO_DRAW;
 				
 				mFrequency = SANITY_MINIGAME_STARTING_FREQUENCY;
+				
+				Vector<String> captions = new Vector<String>();
+				captions.add("You need to lower your heartrate! Tap on the screen in time with the pulsing.");
+				mUI.addControl(new UIControlNote((int)(getWidth() * .8), (int)(getHeight() * .3),captions), 
+						GameUI.POSITION_TOP);
 			}
 			
 			public void draw(Canvas c) {
@@ -1413,21 +1473,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				c.drawBitmap(overlayStress, new Rect(0, 0, overlayStress.getWidth(), overlayStress.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
 				
 				GameUI.scratchPaint.setAlpha(255);
-								
-				// TEMP DRAWING STUFF
-				/*
-				GameUI.scratchPaint.setColor(Color.RED);
-				GameUI.scratchPaint.setTextAlign(Paint.Align.LEFT);
-				c.drawRect(0,0,(float) (A + A * Math.sin(mFrequency * 2 * Math.PI * t)),50, GameUI.scratchPaint);
-				c.drawText("" + mTimeOfLastTap, 10, 80, GameUI.scratchPaint);
-				synchronized (mTapIntervals) {
-					c.drawText(mTapIntervals.toString(), 10, 100, GameUI.scratchPaint);
-					
-					c.drawText("" + mPlayerAverageInterval + " vs " + (1000f / mFrequency), 10, 120, GameUI.scratchPaint);
-				}
-				*/
-				
-				
+							
+				mUI.draw(c); 
 			}
 			
 			private float getPercentComplete() {

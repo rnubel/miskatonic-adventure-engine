@@ -1,5 +1,6 @@
 package com.games.test1;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import android.os.Bundle;
@@ -14,16 +15,18 @@ import com.games.test1.astraal.ASTRAALInventoryItem;
 public class Inventory {
 	private static final String KEY_INVENTORY_ITEMS = "inventoryItems";
 	private static final String KEY_INVENTORY = "inventory";
-	private Vector<InventoryItem> mItems = new Vector<InventoryItem>();	
+	private Vector<InventoryItem> mItems = new Vector<InventoryItem>();
+	private HashMap<String, InventoryItem> mItemMap = new HashMap<String, InventoryItem>(); 
 	
 	/** Add an item to this inventory. */
 	public void addItem(InventoryItem item) {
 		mItems.add(item);
+		mItemMap.put(item.getID(), item);
 	}
 	
 	/** Add an item to this inventory from an ASTRAAL template. */
 	public void addItem(ASTRAALInventoryItem item) {
-		this.addItem(new InventoryItem(item));
+		addItem(new InventoryItem(item));		
 	}
 	
 	/** Remove an item from the inventory. */
@@ -80,6 +83,14 @@ public class Inventory {
 		String[] itemIDsArray = ib.getStringArray(KEY_INVENTORY_ITEMS);
 		for (String itemID : itemIDsArray) {
 			executor.giveItemToPlayer(itemID);
+		}
+	}
+
+	public String getItemName(String itemID) {
+		if (mItemMap.containsKey(itemID)) {
+			return mItemMap.get(itemID).getName();
+		} else {
+			return "unknown";
 		}
 	}
 
