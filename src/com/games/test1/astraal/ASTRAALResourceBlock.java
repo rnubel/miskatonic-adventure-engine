@@ -54,7 +54,7 @@ public class ASTRAALResourceBlock {
 	public void loadAllResources(Resources res) {
 		for (int i = 0; i < mResources.size(); i++) {
 			ASTRAALResource resource = mResources.get(i);
-			resource.loadResource(res);
+			resource.load(res);			
 		}		
 	}
 	

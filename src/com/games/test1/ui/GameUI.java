@@ -120,7 +120,9 @@ public class GameUI {
 	public boolean onClick(int x, int y) {
 		// Iterate through all PositionedControls and see which one
 		// is being clicked on.
-		for (PositionedControl control : mControls) {
+		// ADDED: Iterate in reverse.
+		for (int i = mControls.size() - 1; i >= 0; i--) {
+			PositionedControl control = mControls.get(i);
 			if (control.handleClick(x, y))
 				return true;
 		}

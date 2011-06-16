@@ -23,6 +23,9 @@ public class UIControl {
 	/** Our containing UI. */
 	public GameUI mUI;
 	
+	/** A generic property for use as a flag. */
+	public int userProperty1;
+	
 	/** Hook executed after being attached to a GameUI. */
 	public void doAfterAttach() { }
 

@@ -22,6 +22,7 @@ import com.games.test1.GameView.GameThread.MainMenuState;
 import com.games.test1.aal.AALExecutionState;
 import com.games.test1.astraal.*;
 import com.games.test1.ui.GameUI;
+import com.games.test1.ui.UIContainer;
 import com.games.test1.ui.UIControl;
 import com.games.test1.ui.UIControlButton;
 import com.games.test1.ui.UIControlButtonImage;
@@ -85,13 +86,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public static Typeface captionTypeface;
 	public static Bitmap iconCompass;
-	public static Bitmap iconJournal;
+	public Bitmap iconJournal;
 	public static Bitmap imageNavigatorRight;
 	public static Bitmap imageUINote;
-	public static Bitmap iconInventory;
-	public static Bitmap imageJournalItem;
+	public Bitmap iconInventory;
+	public Bitmap imageJournalItem;
 	public Bitmap overlayRadial;
 	public Bitmap overlayStress;
+	public Bitmap menuNewGame;
+	public Bitmap menuSaveGame;
+	public Bitmap menuLoadGame;
+	public Bitmap titleBackground;
+
+	public Bitmap menuResumeGame;
+
+	public MediaPlayer songMainMenu;
+
+	public MediaPlayer songMainLoop;
+
+	public Bitmap journalBackground;
+
+	public Bitmap captionCardBackground;
 
 	
 	/**
@@ -175,7 +190,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
 			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect2);
 			imageJournalItem = BitmapFactory.decodeResource(mRes, R.drawable.journal_item);
-	
+			titleBackground = BitmapFactory.decodeResource(mRes, R.drawable.bg_title);
+			journalBackground =  BitmapFactory.decodeResource(mRes, R.drawable.journal_bg);
+			captionCardBackground =  BitmapFactory.decodeResource(mRes, R.drawable.captioncard);
+			menuNewGame = BitmapFactory.decodeResource(mRes, R.drawable.menu_newgame);
+			menuSaveGame = BitmapFactory.decodeResource(mRes, R.drawable.menu_savegame);
+			menuLoadGame = BitmapFactory.decodeResource(mRes, R.drawable.menu_loadgame);
+			menuResumeGame = BitmapFactory.decodeResource(mRes, R.drawable.menu_resumegame);	
+			songMainMenu = MediaPlayer.create(context, R.raw.hyh);
+			songMainLoop = MediaPlayer.create(context, R.raw.mainloop);
 
 			// Make sure we don't start trying to draw anything, not until startGame
 			// is called by our run() method.			
@@ -343,6 +366,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			startJournalState();
 		}
 		
+		/** Switch to the main menu state, but keep track of what
+		 *  state to to return to.
+		 */
+		public void showMainMenu() {
+			pushState(StateType.MainMenu);			
+		}
+		
 		/** Play the given sound. Must be loaded from resource block. */
 		public void playSound(String id) {
 			ASTRAALResourceFactory.getSoundClip(id).play();
@@ -355,23 +385,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/** Start up the caption state as needed. */
 		private void startCaptionState() {
-			getCaptionCardState().setScene(new Scene(mCanvasWidth, mCanvasHeight));
-			getCaptionCardState().setCamera(new Camera(0, 0, 
-					mCanvasWidth, mCanvasHeight, 
-					getCaptionCardState().getScene()));
-			getCaptionCardState().setBackground(ASTRAALResourceFactory.getAnimation("caption_card_bg"));			
-
 			setState(StateType.Caption);
 		}
 		
 		/** Switch to the journal screen. */
 		private void startJournalState() {
-			getJournalState().setScene(new Scene(mCanvasWidth, mCanvasHeight));
-			getJournalState().setCamera(new Camera(0, 0, 
-					mCanvasWidth, mCanvasHeight, 
-					getJournalState().getScene()));
-			getJournalState().setBackground(ASTRAALResourceFactory.getAnimation("journal_bg"));			
-	
 			setState(StateType.Journal);
 		}
 		
@@ -554,7 +572,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		public boolean loadFromFile(String filename) {
 			try {
 				FileInputStream in = 
-						context.openFileInput(filename);
+				context.openFileInput(filename);
 				mExecutor.load(in);
 				in.close();
 				
@@ -618,12 +636,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			getMainGameState().load();			
 		}
 		
-		/** Switch to the main menu state, but keep track of what
-		 *  state to to return to.
-		 */
-		public void showMainMenu() {
-			pushState(StateType.MainMenu);
-		}
+
 		
 
 		/** An abstract state that uses a scene-and-camera system. */
@@ -699,8 +712,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				Log.w("Miskatonic", "STARTING MAIN GAME STATE ***");
 				if (mExecutor != null)
 					mExecutor.executeBuffer();
+				songMainLoop.start();
+				songMainLoop.setLooping(true);
 			}
 			
+			
+			public void stop() {
+				songMainLoop.stop();
+				try {
+					songMainLoop.prepare();
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
 			/** Load resources and scene data. */
 			public void load() {
 				Log.w("Miskatonic",	"Beginning load sequence for main game...");
@@ -909,7 +938,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				// First, try the UI.
 				if (mUI.onClick(x, y)) {
 					Log.w("Miskatonic", "UI is blocking click!");
-				} else {				
+				} else {		
+					// Store the coordinates. Don't register a click until
+					// the tap is released.
 					mOldCameraCX = mCamera.getCenterX();
 					mOldCameraCY = mCamera.getCenterY();
 					mMouseDownX = x;
@@ -981,6 +1012,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				return getScene().getAllObjects().get(0);
 			}
 
+
+			// Indicates whether or not an item has been selected.
+			public boolean hasItemSelected() {
+				return mSelectedInventoryItem != null;
+			}
+
 		}
 		
 		/** Displays a full-screen caption card. */
@@ -993,13 +1030,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private Vector<String> lines = new Vector<String>();
 			
 			private Paint captionPaint = new Paint();
+			private Animation bg;
 
 			public CaptionCardState() {
-				computeTextHeight();
+				bg = new Animation(captionCardBackground, 1, mCanvasWidth, mCanvasHeight, 0);
+				
+				computeTextHeight();				
 			}
 			
 			public void start() {				
 				Log.w("Miskatonic", "STARTING CAPTION CARD STATE ***");
+				
+				// Set up the scene with our background.
+				setScene(new Scene(mCanvasWidth, mCanvasHeight));
+				setCamera(new Camera(0, 0, 
+						mCanvasWidth, mCanvasHeight, 
+						getScene()));
+				
+				setBackground(bg);			
 			}
 
 			public void setCaptions(Vector<String> captions) {
@@ -1076,12 +1124,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			private Vector<String> mLines;
 			private int mYStart;
 			private int mTextHeight;
+			private Animation bg;
 			
 			public JournalState() {
+				// Instantiate background.
+				bg = new Animation(journalBackground, 1, mCanvasWidth, mCanvasHeight, 0);
+				
 				// Precalculate the height of our text only once.
 				computeTextHeight();
 				
+				// Create UI.
 				showJournalSelection();
+			}
+			
+			public void start() {
+				// Set up the scene with our background.
+				setScene(new Scene(mCanvasWidth, mCanvasHeight));
+				setCamera(new Camera(0, 0, 
+						mCanvasWidth, mCanvasHeight, 
+						getScene()));
+				
+				setBackground(bg);		
 			}
 			
 			public void computeTextHeight() {
@@ -1216,58 +1279,83 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		public class MainMenuState extends BasicGameState {
 			private static final String SAVESLOT_DATETIME_FORMAT = "%m/%d %H:%M";
 			private static final int MAIN_MENU_BUTTON_HEIGHT = 40;
-			private static final int MAIN_MENU_BUTTON_WIDTH = 240;
+			private static final int MAIN_MENU_BUTTON_WIDTH = 220;
 			private GameUI mUI;
 			
-			public MainMenuState() {
+			public MainMenuState() {				
+				setupBackground();
+			}
+
+			private void setupBackground() {
 				setScene(new Scene(mCanvasWidth, mCanvasHeight));
 				setCamera(new Camera(0, 0, 
 						mCanvasWidth, mCanvasHeight, 
-						getScene()));
-				
-				
+						getScene()));				
+				Animation a = new Animation(titleBackground, 1, mCanvasWidth, mCanvasHeight, 0);
+				setBackground(a);
 			}
 			
 			public void start() {				
 				Log.w("Miskatonic", "STARTING MAIN MENU STATE ***");
+				setupBackground();
 				showRootMenu();
+				
+				songMainMenu.start();
+				songMainMenu.setLooping(true);
+			}
+			
+			public void stop() {
+				songMainMenu.stop();
+				try {
+					songMainMenu.prepare();
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			public void showRootMenu() {
 				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
 				
-				mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Start New Game", new UIEvent() {
+				mUI.addControl(new UIContainer(100,100), GameUI.POSITION_CENTER, true, 5);
+				
+				mUI.addControl(new UIControlButtonImage(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, menuNewGame, new UIEvent() {
 					public void execute(GameThread t, UIControl caller) {		
 						t.setState(StateType.Loading);
 						t.loadAndStartMainGameState();						
 					}
-				}),GameUI.POSITION_CENTER, true, 5);
+				}),GameUI.POSITION_CENTER, true, 0);
 				
 				// Only show "Resume Game" and "Save Game" if there's a game to be resumed. 
 				if (!(mStateStack.empty())) {
-					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Resume Game", new UIEvent() {
+					mUI.addControl(new UIControlButtonImage(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, menuResumeGame, new UIEvent() {
 						public void execute(GameThread t, UIControl caller) {		
 							popState();
 						}
-					}),GameUI.POSITION_CENTER, true, 5);
+					}),GameUI.POSITION_CENTER, true, 0);
 					
-					mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Save Game", new UIEvent() {
+					mUI.addControl(new UIControlButtonImage(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, menuSaveGame, new UIEvent() {
 						public void execute(GameThread t, UIControl caller) {		
 							t.getMainMenuState().showSaveMenu();
 						}
-					}),GameUI.POSITION_CENTER, true, 5);
+					}),GameUI.POSITION_CENTER, true, 0);
 				}
 		
-				mUI.addControl(new UIControlButton(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, "Load Game", new UIEvent() {
+				mUI.addControl(new UIControlButtonImage(MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT, menuLoadGame, new UIEvent() {
 					public void execute(GameThread t, UIControl caller) {		
 						t.getMainMenuState().showLoadMenu();
 					}
-				}),GameUI.POSITION_CENTER, true, 5);				
+				}),GameUI.POSITION_CENTER, true, 0);				
 			}
 			
 			public void showSaveMenu() {
 				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);
 
+				mUI.addControl(new UIContainer(100,100), GameUI.POSITION_CENTER, true, 5);
+				
 				for (int i = 1; i <= 3; i++) {
 					final int slot = i; // Fuckin' embarrassing lack of closures...
 					Time time = getTimeOfSaveSlot(i);
@@ -1290,7 +1378,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 							// something else later.
 							t.popState();
 						}
-					}),GameUI.POSITION_CENTER, true, 5);
+					}),GameUI.POSITION_CENTER, true, 1);
 				}
 				
 				mUI.addControl(new UIControlButton((int) (MAIN_MENU_BUTTON_WIDTH * .75), MAIN_MENU_BUTTON_HEIGHT, "Cancel", new UIEvent() {
@@ -1364,7 +1452,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			@Override
 			public void draw(Canvas c) {
 				super.draw(c);
-				c.drawColor(Color.WHITE);
+								
 				mUI.draw(c);
 			}
 			

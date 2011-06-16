@@ -56,16 +56,33 @@ public class ASTRAALResAnimation extends ASTRAALResource {
 		// until loadResource is called.
 		ASTRAALResourceFactory.addByID(mID, this);
 	}
+		
 	
 	/**
 	 * Actually load this resource.
 	 * @param res - Resources context to use. 
 	 */
-	public void loadResource(Resources res) {		
+	public void load(Resources res) {		
+		super.load(res);
+		
 		Log.w("Miskatonic", "Loading resource: " + mSpriteID);
 		Bitmap bmp = BitmapFactory.decodeResource(res, mImageID, null);
 		mResource = new Animation(bmp, mFrameCount, mWidth, mHeight, mFPS);
 		((Animation) mResource).setSpriteID(mSpriteID);
+	}
+	
+	public void unload() {
+		super.unload();
+		
+		Log.w("Miskatonic", "Unloading resource: " + mSpriteID);
+		Animation temp = ((Animation) mResource);
+		mResource = null;
+		temp.getBitmap().recycle();
+		
+	}
+
+	public int getEstimatedSize() {
+		return mResource.getEstimatedSize();	
 	}
 
 	

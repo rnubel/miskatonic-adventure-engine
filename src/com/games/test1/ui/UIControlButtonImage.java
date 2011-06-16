@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 public class UIControlButtonImage extends UIControlButton {
 	private Bitmap mBitmap;
@@ -17,7 +18,10 @@ public class UIControlButtonImage extends UIControlButton {
 	}
 	
 	/** Draw this button. */
-	public void draw(Canvas c, int x, int y) {		
-		c.drawBitmap(mBitmap, x, y, GameUI.scratchPaint);
+	public void draw(Canvas c, int x, int y) {
+		Rect src = null;//new Rect(0, 0, mBitmap.getWidth(), mBitmap.getHeight());
+		Rect dst = new Rect(x, y, x+mWidth, y+mHeight);
+		c.drawBitmap(mBitmap, src, dst, GameUI.scratchPaint);	
+		
 	}
 }

@@ -40,8 +40,10 @@ public class UIControlCaption extends UIControlMultiTextDisplayer {
 		c.drawRect(x, y, x + mWidth, y + mHeight, GameUI.scratchPaint);
 		
 		GameUI.scratchPaint.setColor(Color.rgb(120, 60, 60));		
+		GameUI.scratchPaint.setStrokeWidth(2.0f);
 		c.drawRect(x+1, y+1, x + mWidth - 1, y + mHeight - 1, GameUI.scratchPaint);
 		
+		GameUI.scratchPaint.setStrokeWidth(1.0f);
 		GameUI.scratchPaint.setColor(Color.rgb(50, 50, 50));		
 		c.drawRect(x+2, y+2, x + mWidth - 2, y + mHeight - 2, GameUI.scratchPaint);
 		

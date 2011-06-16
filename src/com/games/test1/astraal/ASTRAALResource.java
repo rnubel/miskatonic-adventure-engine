@@ -16,6 +16,7 @@ import com.games.test1.*;
 public class ASTRAALResource {
 	protected Resource mResource;
 	protected String mID;
+	protected boolean mIsLoaded;
 
 	/**
 	 * Read in the details of this resource from the attributes
@@ -27,13 +28,28 @@ public class ASTRAALResource {
 	}
 	
 	/** Load this resource's actual resource into being. */
-	public void loadResource(Resources res) {
-		// Nothing here.		
+	public void load(Resources res) {
+		mIsLoaded = true;
+	}
+	
+	/** Unload this resource and free up space. */
+	public void unload() {
+		mIsLoaded = false;
 	}
 	
 	/** Return this resource's actual resource. */
 	public Resource getResource() {
 		return mResource;
+	}
+	
+	/** Estimate the size of this resource. Should be an upper-bound. */
+	public int getEstimatedSize() {
+		return 0;		
+	}
+	
+	/** Whether or not this resource is currently loaded. */
+	public boolean isLoaded() {
+		return mIsLoaded;
 	}
 	
 	/**

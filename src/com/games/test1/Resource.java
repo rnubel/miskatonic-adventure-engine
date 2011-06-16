@@ -7,6 +7,11 @@ package com.games.test1;
  */
 public abstract class Resource {
 
+	public int getEstimatedSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 
 }

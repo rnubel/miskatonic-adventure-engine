@@ -49,7 +49,7 @@ public class UIControlInventory extends UIContainer {
 			}
 		} else {
 			// Remove ourselves along with details panel.
-			if (mDetailsPanel.mShouldRemove) {
+			if (mDetailsPanel.mShouldRemove && game.getMainGameState().hasItemSelected()) {
 				removeSelf();
 			}
 		}
@@ -65,14 +65,14 @@ public class UIControlInventory extends UIContainer {
 							"Use", 
 							new UIEvent() {
 								public void execute(GameThread game, UIControl caller) {
-									game.getMainGameState().selectInventoryItem(i);
-									caller.removeSelf();
+									game.getMainGameState().selectInventoryItem(i);									
+									caller.removeSelf();									
 								}								
 							},
 							"Cancel",
 							new UIEvent() {
 								public void execute(GameThread game, UIControl caller) {									
-									caller.removeSelf();
+									caller.removeSelf();									
 								}								
 							},
 							(int) (mWidth * .9),

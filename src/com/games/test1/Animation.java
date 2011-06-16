@@ -84,6 +84,10 @@ public class Animation extends Resource {
 		return mBitmap;
 	}
 	
+	public int getEstimatedSize() {
+		return (4 * (mBitmap.getWidth() * mBitmap.getHeight()));
+	}
+	
 	public void setBitmap(Bitmap bitmap) {
 		this.mBitmap = bitmap;
 	}

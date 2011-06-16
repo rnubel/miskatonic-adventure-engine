@@ -35,7 +35,8 @@ public class UIControlButton extends UIControl {
 	}
 
 	/** Draw this button. */
-	public void draw(Canvas c, int x, int y) {		
+	public void draw(Canvas c, int x, int y) {
+		/*
 		GameUI.scratchPaint.setStyle(Paint.Style.FILL);
 		GameUI.scratchPaint.setColor(Color.rgb(60, 60, 60));		
 		c.drawRect(x, y, x + mWidth, y + mHeight, GameUI.scratchPaint);
@@ -45,6 +46,7 @@ public class UIControlButton extends UIControl {
 		
 		GameUI.scratchPaint.setColor(Color.rgb(50, 50, 50));		
 		c.drawRect(x+2, y+2, x + mWidth - 2, y + mHeight - 2, GameUI.scratchPaint);
+		*/
 		
 		GameUI.scratchPaint.setColor(Color.WHITE);
 		GameUI.scratchPaint.setTextSize(16.0f);

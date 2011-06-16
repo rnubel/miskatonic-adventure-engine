@@ -23,9 +23,9 @@ import com.games.test1.aal.AALStatementBlock;
 import com.games.test1.astraal.*;
 
 /**
- * AKA "Azathoth", the GameExecutor uses the ASTRAAL classes to run the game. It is
- * responsible for making the right calls to both ASTRAALRoot and GameThread; thus,
- * it needs a handle to both to work.
+ * AKA "Azathoth", the GameExecutor is responsible for interpreting the ASTRAAL
+ * definition of the game (a parsed representation of the XML file) into an actual
+ * game.
  */
 public class GameExecutor {
 	private static final String KEY_SCENE_STATES = "sceneStates";
@@ -40,12 +40,10 @@ public class GameExecutor {
 	
 	/** State of our journal system. */
 	private JournalStatus mJournalState = new JournalStatus();
-	
-	/** TODO: State of our inventory. */
-	
+
 	/** 
 	 * Map of Scene states, so that we can restore object positions in
-	 * a persistent fashion. TODO: Save and load this as well.
+	 * a persistent fashion. 
 	 */
 	private HashMap<String, Bundle> mSceneStates;
 
@@ -55,6 +53,7 @@ public class GameExecutor {
 	/** A buffer of AAL commands to execute when returning to the main game state. */
 	private AALStatement mStatementBuffer;
 	
+	/** Create new GameExecutor. We need both a game and an ASTRAAL tree to use. */
 	public GameExecutor(GameThread gt, ASTRAALRoot root) {
 		this.mGame = gt;
 		this.mAstraal = root;
@@ -163,19 +162,19 @@ public class GameExecutor {
 		for (String key : scenesBundle.keySet()) {
 			mSceneStates.put(key, scenesBundle.getBundle(key));
 		}
-		
-		// Switch to that scene, reloading what we need to.
-		switchToScene(sceneID);
-		
+
 		// From our new map, update the current scene.
 		// restoreStateForCurrentScene();
-		
-		// Reload our script state.
-		mExecutionState.loadFromBundle(b);
-		
+				
 		// Reload our journal and inventory states.		
 		updateJournalPages(b);
 		updateInventory(b);
+
+		// Reload our script state.
+		mExecutionState.loadFromBundle(b);				
+		
+		// Switch to that scene, reloading what we need to.
+		switchToScene(sceneID);
 	}
 
 	/** Update the inventory with items as loaded from the given bundle. */

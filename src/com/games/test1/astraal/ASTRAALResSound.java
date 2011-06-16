@@ -38,7 +38,7 @@ public class ASTRAALResSound extends ASTRAALResource {
 	 * Actually load this resource.
 	 * @param res - Resources context to use. 
 	 */
-	public void loadResource(Resources res) {		
+	public void load(Resources res) {		
 		mResource = new SoundClip(mID, res.openRawResourceFd(mSoundID));
 	}
 

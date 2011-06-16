@@ -298,9 +298,18 @@ public class AALExecutionState {
 			String id = (String) args[0].getValue();
 			int delay = (Integer) args[1].getValue();
 			mExecutor.setTimer(id, delay);			
+		} else
+			
+		// removeIfInInventory [item_id] [object_id]: REMOVES ITEM IF PLAYER HAS IT IN THEIR INVENTORY.
+		if (functionName.equals("removeIfInInventory")) {			
+			String itemID = (String) args[0].getValue();
+			String objID = (String) args[1].getValue();
+			if (mExecutor.getGame().getInventory().hasItem(itemID)) {
+				DrawnObject o = mScene.getObjectFromID(objID);
+				o.setSprite("");
+			}
 		}
 			
-
 		
 		
 		
@@ -312,3 +321,4 @@ public class AALExecutionState {
 		return new AALValue();
 	}	
 }
+

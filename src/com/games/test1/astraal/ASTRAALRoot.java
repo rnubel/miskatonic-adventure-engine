@@ -114,11 +114,38 @@ public class ASTRAALRoot {
 	 */
 	public void loadResourcesFor(ASTRAALScene scene) {
 		// Each scene has a single resource block that contains its resources. Load
-		// that block, unless we already have.
+		// that block, unless we already have.		
 		ASTRAALResourceBlock block = getResourceBlockByID(scene.getResourceBlockID());
-		if (mResourceBlockCurrentlyLoaded != block) {			
-			block.loadAllResources(mResources);
+				
+		// Do we need to load up a different block?
+		//if (mResourceBlockCurrentlyLoaded != block) {
+		//			block.loadAllResources(mResources);			
+		//	}
+		
+		// Make sure we have the resources we need loaded.
+		Vector<String> neededResourceIDs = new Vector<String>();
+		// Need scene BG...
+		neededResourceIDs.add(scene.getBackgroundID());
+		// Need objects...
+		for (ASTRAALObject obj : scene.getObjects()) {
+			if (!obj.getSpriteID().equals("")) {
+				neededResourceIDs.add(obj.getSpriteID());
+			}
 		}
+		// Need items in inventory...
+		for (ASTRAALInventoryItem item : getItems()) {
+			neededResourceIDs.add(item.getSpriteID());
+		}
+		
+		// Do an n^2 pass to ensure every needed resource is loaded.
+		for (ASTRAALResource res : block.getResources()) {
+			if (neededResourceIDs.contains(res.getID())) {
+				if (!res.isLoaded())
+					res.load(mResources);
+			} else if (res.isLoaded()){
+				res.unload();
+			}
+		}	
 		
 		// The background should be in there, so find it for quick reference.
 		scene.setBackground(block.getResourceByID(scene.getBackgroundID()));
