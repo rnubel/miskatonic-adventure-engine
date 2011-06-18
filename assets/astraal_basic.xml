@@ -486,6 +486,7 @@
 		<NAVIGATION position="bottom" to_scene="scene_lab_hallway"/>
 		<OBJECT id="lab_hallway_door_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
+				Let chem_doorbroken = False;
 				Call showCaptionCard("Unfortunately, while the door is indeed barred from my side, the bar is locked solidly in place by several bolts on the left-hand side.");
 			</EVENT>
 		</OBJECT>
