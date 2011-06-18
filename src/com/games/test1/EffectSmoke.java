@@ -8,35 +8,29 @@ import android.graphics.Paint;
 
 /** An effect that creates a small cloud of smoke. */
 public class EffectSmoke extends Effect {
-	private static final int DEFAULT_EFFECT_TIME = 30;
-	private int mTimer;
+	private Animation mSmoke;
+	private int lastFrame;
 	
-	public static Paint smokePaint;
-
-	public EffectSmoke(DrawnObject target) {
-		mX = target.getX() + target.getW()/2;
-		mY = target.getY() + target.getH()/2 + 5; // Eeeeh.
+	public EffectSmoke(int x, int y) {
+		mX = x;
+		mY = y;
 	
-		mTimer = DEFAULT_EFFECT_TIME;
+		mSmoke = GameView.animationSmoke;
+		mSmoke.setFrameNum(0);
+		lastFrame = 0;
 	}
 	
-	public static Paint getPaint() {
-		if (smokePaint == null) {
-			// setup paint
-		}
-		return smokePaint;
-	}
-	
-	public boolean update() {
-		mTimer--;
-		if (mTimer == 0) {
+	public boolean update() {		
+		if (mSmoke.getFrameNum() < lastFrame) {
 			return true;
-		} else { 
+		} else {
+			lastFrame = mSmoke.getFrameNum();
 			return false;
 		}
+		 
 	}
 	
-	public void draw(Canvas c, float x, float y) {
-		
+	public void draw(Canvas c, float x, float y) {	
+		mSmoke.draw(c, (int)x, (int)y);		
 	}
 }

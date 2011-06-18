@@ -108,6 +108,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public Bitmap captionCardBackground;
 
+	public static Animation animationSmoke;
+
 	
 	/**
 	 * Thread for the actual game logic and rendering.
@@ -187,6 +189,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
 			imageUINote = BitmapFactory.decodeResource(mRes, R.drawable.ui_note);
+			animationSmoke = new Animation(BitmapFactory.decodeResource(mRes, R.drawable.smokelinestrip), 5, 64, 128, 1);
 			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
 			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect2);
 			imageJournalItem = BitmapFactory.decodeResource(mRes, R.drawable.journal_item);
@@ -1016,6 +1019,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			// Indicates whether or not an item has been selected.
 			public boolean hasItemSelected() {
 				return mSelectedInventoryItem != null;
+			}
+
+
+			/** Create a smoke effect at the given coordinates. */
+			public void showSmokeEffect(int x, int y) {
+				mScene.addEffect(new EffectSmoke(x, y));
+				
 			}
 
 		}

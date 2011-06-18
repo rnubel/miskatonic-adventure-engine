@@ -245,6 +245,14 @@ public class AALExecutionState {
 				new CameraEffectFade(true, speed));
 		} else
 			
+		// showSmoke [x] [y]: SHOW SMOKE EFFECT AT GIVEN POSITION.
+		if (functionName.equals("showSmoke")) {
+			int x = (Integer) args[0].getValue();
+			int y = (Integer) args[1].getValue();
+
+			mExecutor.getGame().getMainGameState().showSmokeEffect(x, y);
+		} else		
+			
 		// giveItem [item_id]: GIVE ITEM TO PLAYER (VIA INVENTORY).
 		if (functionName.equals("giveItem")) {
 			String itemID = (String) args[0].getValue();
