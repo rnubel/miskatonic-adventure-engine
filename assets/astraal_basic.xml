@@ -43,6 +43,9 @@
 		<ANIMATION id="lab_note" fps="0" width="53" height="28" framecount="1">
 			lab_note
 		</ANIMATION>
+		<ANIMATION id="lab_vanadium" fps="0" width="32" height="32" framecount="1">
+			lab_vanadium
+		</ANIMATION>
 		<ANIMATION id="lab_water" fps="0" width="67" height="59" framecount="1">
 			lab_water			
 		</ANIMATION>
@@ -75,7 +78,7 @@
 		<ITEM id="chem_sulfur" sprite="item_sulfur" name="Yellow powder">A yellow powder, smelling of brimstone.</ITEM>
 		<ITEM id="chem_carbon" sprite="item_carbon" name="Black powder">A black powder, smelling of soot and ash.</ITEM>
 		<ITEM id="chem_container" sprite="item_container" name="Container">An empty glass container.</ITEM>
-		<ITEM id="chem_vanadium" sprite="spr_star" name="Vanadium Oxide">A catalyst, which I recall requires a very high temperature to be effective.</ITEM>
+		<ITEM id="chem_vanadium" sprite="lab_vanadium" name="Vanadium Oxide">A catalyst, which I recall requires a very high temperature to be effective.</ITEM>
 		<ITEM id="chem_water" sprite="item_water" name="Jug of Water">A jug of clear water.</ITEM>
 		<ITEM id="chem_matches" sprite="item_matches" name="Box of Matches">A box of instant matches.</ITEM>
 		<ITEM id="chem_acid" sprite="item_acid" name="Sulfuric Acid">A container of what I hope to be sulfuric acid.</ITEM>
@@ -133,13 +136,13 @@
 				
 			</EVENT>
 		</OBJECT>
-		<OBJECT id="lab_vanadium" x="248" y="127" width="40" height="40" sprite="spr_star">
+		<OBJECT id="lab_vanadium" x="248" y="142" width="40" height="40" sprite="lab_vanadium">
 			<EVENT event="onenter">
 				Call removeIfInInventory("chem_vanadium", "lab_vanadium");				
 			</EVENT>		
 		
 			<EVENT event="onclick">
-				Call showCaption("VANADIUM");
+				Call showCaption("A small jar with a 'V' etched into it. It seems familiar -- some type of chemical. A catalyst, perhaps...");
 				Call promptTakeAndRemoveItem("chem_vanadium", "lab_vanadium");					
 			</EVENT>
 		</OBJECT>
@@ -221,15 +224,16 @@
 		<OBJECT id="lab2_null" x="0" y="0" width="0" height="0" sprite="">
 			<EVENT event="onload">
 				Let lab_enteredLab2 = True;
-				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
+				Call showCaptionCard("Turning to my right, I recoiled in horror at the grim sight which awaited me...");
+			</EVENT>
+			<!--  				Call showCaptionCard("Thus far, my gaze had been focused straight ahead. Now, turning my head to the right with some difficulty, I froze at once -- and all thoughts on the peculiarities of the chamber’s miscellany were superseded by the state of my fellow guest.",
 								 "The macabre scene before me assaulted all my senses, yet no effort of mine could force my gaze away. My mind began to reel, and my tenuous grip upon my consciousness began to slip; having just woken from a black oblivion, I found myself in danger of slipping into it once again.",
 								 "Frantically, I struggled to regain control of my sanity...");
-				Call doOnReturnToMainGame("Call enterSanityMiniGame();");
-			</EVENT>
+				Call doOnReturnToMainGame("Call enterSanityMiniGame();"); -->
 		</OBJECT>
 		<OBJECT id="lab2_body" x="156" y="73" width="546" height="144" sprite="">
 			<EVENT event="onclick">
-				Call showCaption("The still-decomposing corpse of some poor soul lies on the table, limbs splayed and twisted in terrible agony. From what little of my ragged memory pertains to physiological knowledge,", " would estimate that he had lain dead for no more than a couple months. I can’t help but speculate at the cause of his death... was I involved? If not, why am I here?");
+				Call showCaption("The still-decomposing corpse of some poor soul lies on the table, limbs splayed and twisted in terrible agony. It seems to me,", "that he's lain dead for at least a couple months. I can’t help but speculate at the cause of his death... was I involved?");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab2_restraint1" x="282" y="213" width="46" height="57" sprite="">
@@ -385,6 +389,9 @@
 						Call setTimerForObject("lab_storage2_catalyst", 4000);
 					End
 					If [lab1_itemInBurner == "chem_carbon"] Then
+						Call showSmoke(150,115);
+						Call showSmoke(154,117);
+						
 						Call showCaption("The thick, black cloud of smoke made my eyes water, and I realized -- the powder must have been graphite, a form of carbon, which meant this was just ordinary smoke.", "I blew out the burner and waved away the oppressive smoke.");
 					End
 				End
@@ -404,6 +411,8 @@
 						Call showCaption("The powder begins to combust...");												
 					End
 					
+					Call showSmoke(150,115);
+					
 					Let chem_stage = 0;
 					Call setTimerForObject("lab_storage2_burner", 4000);
 				End
@@ -416,7 +425,7 @@
 			
 			<EVENT event="onclick">
 				Call showCaption("A box of matches, which I can use to ignite this burner.");
-				Call promptTakeItem("chem_matches");
+				Call promptTakeAndRemoveItem("chem_matches", "lab_storage2_matches");
 			</EVENT>
 		</OBJECT>
 		<OBJECT id="lab_storage2_hydrater" x="389" y="126" width="59" height="121">		
@@ -432,6 +441,7 @@
 					If [chem_stage == 3] Then
 						If [SELECTED_ITEM_ID == "chem_container"] Then
 							Call giveItem("chem_acid");
+							Call showCaption("I pour out the acidic substance into the container and stopper it.");
 						Else
 							Call showCaption("No, that won't work.");
 						End
@@ -491,15 +501,17 @@
 			</EVENT>
 		</OBJECT>
 
-		<OBJECT id="lab_hallway_door_bar" x="268" y="153" width="289" height="63">		
+		<OBJECT id="lab_hallway_door_bar" x="259" y="187" width="349" height="121">		
 			<EVENT event="onclick">
 				If [chem_doorbroken] Then
 					Call showCaptionCard("I pulled on the bar with all my might, and shortly it broke free of the corroded bolts.", "I opened the door, which gave way reluctantly, and noticed an immediate change in temperature.", "The air behind me seemed to rush out greedily into the open space, as if freed from long captivity...");
+				Else
+					Call showCaption("The bar won't budge. The bolts on the left are holding it in place.");
 				End
 			</EVENT>					
 		</OBJECT>
 		
-		<OBJECT id="lab_hallway_door_bolt" x="208" y="153" width="60" height="63">
+		<OBJECT id="lab_hallway_door_bolt" x="199" y="187" width="59" height="121">
 			<EVENT event="onclick">
 				If [chem_doorbroken] Then
 					Call showCaption("I need to pull on the bar.");
@@ -523,10 +535,10 @@
 			</EVENT>
 		</OBJECT>
 		
-		<OBJECT id="lab_hallway_door_bolt" x="558" y="153" width="54" height="63">
+		<OBJECT id="lab_hallway_door_hinge" x="604" y="182" width="44" height="146">
 			<EVENT event="onclick">
 				Call showCaption("The hinge here seems rather solid. Even if I could remove the pin, the bolts would still hold the door in.");
 			</EVENT>		
-		</OBJECT>
+		</OBJECT>		
 	</SCENE>
 </ASTRAAL>

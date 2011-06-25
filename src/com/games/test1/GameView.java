@@ -108,6 +108,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	public Bitmap captionCardBackground;
 
+	public Bitmap imageTakeItem;
+
 	public static Animation animationSmoke;
 
 	
@@ -189,6 +191,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			iconInventory = BitmapFactory.decodeResource(mRes, R.drawable.inv);
 			imageNavigatorRight = BitmapFactory.decodeResource(mRes, R.drawable.side_highlight_right);
 			imageUINote = BitmapFactory.decodeResource(mRes, R.drawable.ui_note);
+			imageTakeItem = BitmapFactory.decodeResource(mRes, R.drawable.takeitem);
 			animationSmoke = new Animation(BitmapFactory.decodeResource(mRes, R.drawable.smokelinestrip), 5, 64, 128, 1);
 			overlayRadial = BitmapFactory.decodeResource(mRes, R.drawable.radial_overlay);
 			overlayStress = BitmapFactory.decodeResource(mRes, R.drawable.creepeffect2);
@@ -822,10 +825,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 				}
 				
 				// Add a button that, when clicked, takes the item. 
-				final UIControlButton control = new UIControlButton(
-					50,
-					(int)(getHeight() * .25),
-					"Take Item",
+				final UIControlButton control = new UIControlButtonImage(
+					64,
+					64,
+					imageTakeItem,
 					new UIEvent() {
 						@Override
 						public void execute(GameThread game, UIControl caller) {
