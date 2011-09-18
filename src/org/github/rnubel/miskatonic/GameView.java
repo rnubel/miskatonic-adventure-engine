@@ -33,7 +33,7 @@ import org.github.rnubel.miskatonic.ui.UIControlNote;
 import org.github.rnubel.miskatonic.ui.UIEvent;
 import org.xml.sax.InputSource;
 
-import com.games.test1.R;
+import org.github.rnubel.miskatonic.R;
 
 import android.content.Context;
 import android.content.res.Resources;

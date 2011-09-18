@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
-import com.games.test1.R;
+import org.github.rnubel.miskatonic.R;
 
 /**
  * Wraps around a Resource, allowing us to load that resource only

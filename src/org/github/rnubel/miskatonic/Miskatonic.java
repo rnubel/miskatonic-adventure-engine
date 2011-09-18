@@ -2,7 +2,7 @@ package org.github.rnubel.miskatonic;
 
 import org.github.rnubel.miskatonic.GameView.GameThread;
 
-import com.games.test1.R;
+import org.github.rnubel.miskatonic.R;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import android.view.Window;
  * Android-UI components. The game thread is contained within
  * a view, so it can draw to the screen.
  */
-public class TestOne extends Activity {
+public class Miskatonic extends Activity {
 	private GameView mGameView;
 	private GameThread mGameThread;
 
