@@ -3,20 +3,14 @@ package org.github.rnubel.miskatonic;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Stack;
-import java.util.Timer;
 import java.util.Vector;
 
-import org.github.rnubel.miskatonic.GameView.GameThread.BasicGameState;
-import org.github.rnubel.miskatonic.GameView.GameThread.MainMenuState;
 import org.github.rnubel.miskatonic.aal.AALExecutionState;
 import org.github.rnubel.miskatonic.astraal.*;
 import org.github.rnubel.miskatonic.ui.GameUI;
@@ -25,10 +19,8 @@ import org.github.rnubel.miskatonic.ui.UIControl;
 import org.github.rnubel.miskatonic.ui.UIControlButton;
 import org.github.rnubel.miskatonic.ui.UIControlButtonImage;
 import org.github.rnubel.miskatonic.ui.UIControlButtonLabelledImage;
-import org.github.rnubel.miskatonic.ui.UIControlButtonListItem;
 import org.github.rnubel.miskatonic.ui.UIControlCaption;
 import org.github.rnubel.miskatonic.ui.UIControlInventory;
-import org.github.rnubel.miskatonic.ui.UIControlNavigator;
 import org.github.rnubel.miskatonic.ui.UIControlNote;
 import org.github.rnubel.miskatonic.ui.UIEvent;
 import org.xml.sax.InputSource;
@@ -119,10 +111,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	 */
 	public class GameThread extends Thread {
 		private static final String SAVEGAME_FILENAME_BASE = "savegame_";
-
-		private static final int CAMERA_DEFAULT_WIDTH = 800;
-
-		private static final int CAMERA_DEFAULT_HEIGHT = 480;
 
 		private static final int MAX_MOUSE_DEVIATION_FOR_CLICK = 20;
 
@@ -465,9 +453,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 					break;
 				case Loading:
 					tState = new LoadingState();
-					break;
-				case SanityMiniGame:
-					tState = new SanityMiniGameState();
 					break;
 				}
 
@@ -1484,173 +1469,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		} // MainMenuState
 		
 		
-		/** Runs the sanity minigame. */ 
-		public class SanityMiniGameState extends org.github.rnubel.miskatonic.State {
-			private static final int AMPLITUDE_PADDING = 30;
-			private static final int OSCILLATION_AMPLITUDE_MULTIPLIER = 5;
-			private static final int NUM_SLICES_TO_DRAW = 40;
-			private static final int 	SANITY_MINIGAME_WINDOW_SIZE = 5;
-			private static final float 	SANITY_MINIGAME_STARTING_FREQUENCY = 2.0f;
-			private static final float 	SANITY_MINIGAME_STEP_SIZE = 0.2f;
-			private static final float 	SANITY_MINIGAME_ENDING_FREQUENCY = 1.0f;
-			private static final int 	SANITY_MINIGAME_STEPS_TO_CONFIRM = 3;
-			private static final float 	SANITY_MINIGAME_TOLERANCE_PERCENT = 0.07f;
-			private static final float WAVELENGTH_MULTIPLIER = 20f;
-			private static final double MAX_OVERLAY_ALPHA = 100;
 			
-			private GameUI mUI; 
-
-		
-			private Bitmap mSanityBackgroundImage;
-			
-			private long mTimeOfLastTap;
-			private Queue<Long> mTapIntervals = new LinkedList<Long>();			
-						
-			/** Current frequency that needs to be matched, in beats-per-second. */
-			private float mFrequency;
-			
-			/** Player's current average interval between taps. */
-			private int mPlayerAverageInterval;
-			
-			/** How long the player has successfully been matching the current frequency. */
-			private int mPlayerStepsConfirmed;
-			
-			/** Bounds on what part of the bg image we're drawing. */
-			private int mLeftBound, mRightBound;
-			private int mSliceHeight;
-			
-			
-			public SanityMiniGameState() {
-				mUI = new GameUI(getWidth(), getHeight(), GameThread.this);				
-			}
-			
-			public void start() {
-				Log.w("Miskatonic", "STARTING SANITY MINIGAME STATE ***");
-				
-				// Use the MGS's current background as ours.
-				mSanityBackgroundImage = getMainGameState().getBackground().getAnimation().getBitmap();
-				mLeftBound = mSanityBackgroundImage.getWidth() / 2 - getWidth() / 2 - AMPLITUDE_PADDING;
-				mRightBound = mSanityBackgroundImage.getWidth() / 2 + getWidth() / 2 + AMPLITUDE_PADDING;
-				mSliceHeight = mSanityBackgroundImage.getHeight() / NUM_SLICES_TO_DRAW;
-				
-				mFrequency = SANITY_MINIGAME_STARTING_FREQUENCY;
-				
-				Vector<String> captions = new Vector<String>();
-				captions.add("You need to lower your heartrate! Tap on the screen in time with the pulsing.");
-				mUI.addControl(new UIControlNote((int)(getWidth() * .8), (int)(getHeight() * .3),captions), 
-						GameUI.POSITION_TOP);
-			}
-			
-			public void draw(Canvas c) {
-				
-				int A = 100;
-				float t = getTimeInSeconds();
-				
-				
-				float xShift, nextXShift = 0f;
-				for (int i = 0; i <= NUM_SLICES_TO_DRAW; i++) { 
-					c.save();
-					xShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + i * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;					
-					nextXShift = (float) Math.sin(mFrequency * 2 * Math.PI * t + (i+1) * WAVELENGTH_MULTIPLIER) * mFrequency * OSCILLATION_AMPLITUDE_MULTIPLIER;
-					c.translate(xShift, 0);
-					
-					float skewAmt = (nextXShift - xShift)/(float)mSliceHeight;
-					c.skew(skewAmt, 0);//
-					c.translate(-skewAmt * (i) * mSliceHeight, 0);
-					Rect src = new Rect(mLeftBound, i * mSliceHeight, mRightBound, (i+1) * mSliceHeight);
-					Rect dst = new Rect(-AMPLITUDE_PADDING, i * mSliceHeight, getWidth() + AMPLITUDE_PADDING, (i+1) * mSliceHeight);
-					c.drawBitmap(mSanityBackgroundImage, src, dst, GameUI.scratchPaint);
-									
-					c.restore();
-				}
-				
-				// Draw the overlays.
-				GameUI.scratchPaint.setAlpha((int) (Math.sin(mFrequency * 2 * Math.PI * t) * MAX_OVERLAY_ALPHA/2 + MAX_OVERLAY_ALPHA));
-				
-				c.drawBitmap(overlayRadial, new Rect(0, 0, overlayRadial.getWidth(), overlayRadial.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
-				
-				Log.w("Miskatonic", "percentComplete: " + getPercentComplete());
-				GameUI.scratchPaint.setAlpha((int) ((Math.sin(mFrequency * 2 * Math.PI * t) * 50 + 205) * ( 1 - getPercentComplete()))); 
-				
-				c.drawBitmap(overlayStress, new Rect(0, 0, overlayStress.getWidth(), overlayStress.getHeight()), new Rect(0, 0, getWidth(), getHeight()), GameUI.scratchPaint);
-				
-				GameUI.scratchPaint.setAlpha(255);
-							
-				mUI.draw(c); 
-			}
-			
-			private float getPercentComplete() {
-				return (float) (mFrequency - SANITY_MINIGAME_STARTING_FREQUENCY) / (SANITY_MINIGAME_ENDING_FREQUENCY - SANITY_MINIGAME_STARTING_FREQUENCY);
-			}
-
-			private float getTimeInSeconds() {
-				return (float)(System.currentTimeMillis() % 100000) / 1000f;
-			}
-			
-			@Override
-			public void onMousePress(int x, int y) {				
-				long currentTimeMillis = System.currentTimeMillis();
-				synchronized (mTapIntervals) {
-					// Register the new tap and recompute the average using it.
-					registerTap(currentTimeMillis);					
-					recalculateAverageInterval();					
-				}
-				
-				// If the new average is within tolerance, increment confirmed counter. Otherwise, reset it.
-				int interval = convertFrequencyToInterval(mFrequency);
-				if (Math.abs(mPlayerAverageInterval - interval) 
-						< SANITY_MINIGAME_TOLERANCE_PERCENT * interval) {
-					if (++mPlayerStepsConfirmed > SANITY_MINIGAME_STEPS_TO_CONFIRM) {
-						decreaseFrequency();
-					}
-				} else {
-					mPlayerStepsConfirmed = 0;
-				}
-				
-			}
-
-			/** Increase velocity, decrease altitude, reverse direction! */
-			private void decreaseFrequency() {
-				mFrequency -= SANITY_MINIGAME_STEP_SIZE;				
-				mPlayerStepsConfirmed = 0;				
-				
-				if (mFrequency < SANITY_MINIGAME_ENDING_FREQUENCY) {
-					onSuccess();
-				}
-			}
-
-			/** Callback when the player wins the game. */
-			private void onSuccess() {
-				setState(StateType.Main);				
-			}
-
-			private int convertFrequencyToInterval(float freq) {				
-				return (int) (1000f / freq);
-			}
-
-			private void recalculateAverageInterval() {
-				int sum = 0;					
-				for (long interval : mTapIntervals) {
-					sum += interval;
-				}
-				if (sum > 0)
-					mPlayerAverageInterval = sum / mTapIntervals.size();
-			}
-
-			private void registerTap(long currentTimeMillis) {
-				if (mTimeOfLastTap != 0) {
-					mTapIntervals.add(currentTimeMillis - mTimeOfLastTap);
-					if (mTapIntervals.size() > SANITY_MINIGAME_WINDOW_SIZE) {
-						mTapIntervals.remove();
-					}
-				}
-				mTimeOfLastTap = currentTimeMillis;
-			}
-			
-			public StateType getType() { return StateType.SanityMiniGame; }
-
-		}
-		
 		/** Temporary state that switches back immediately. */
 		public class InitializationState extends org.github.rnubel.miskatonic.State {
 
